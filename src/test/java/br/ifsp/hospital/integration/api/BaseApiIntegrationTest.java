@@ -71,4 +71,13 @@ public abstract class BaseApiIntegrationTest {
         userRepository.deleteAll();
     }
 
+    protected RequestSpecification withAuth() {
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + authToken);
+    }
+
+    protected RequestSpecification withoutAuth() {
+        return RestAssured.given().contentType(ContentType.JSON);
+    }
 }
