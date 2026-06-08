@@ -315,6 +315,31 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     }
 
     @Nested
+    @DisplayName("PATCH /api/v1/appointments/{id}/bill")
+    class MarkAsBilled {
+
+        @Test
+        @DisplayName("Deve faturar atendimento fechado e retornar 200 com status BILLED")
+        void shouldMarkAppointmentAsBilledAndReturn200() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth().patch("/api/v1/appointments/" + appointmentId + "/close");
+
+            withAuth()
+                    .patch("/api/v1/appointments/" + appointmentId + "/bill")
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(appointmentId))
+                    .body("status", equalTo("BILLED"));
+        }
+    }
+
+    @Nested
     @DisplayName("PATCH /api/v1/appointments/{id}/close")
     class Close {
 
