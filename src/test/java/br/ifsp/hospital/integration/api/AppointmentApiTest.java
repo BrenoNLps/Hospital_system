@@ -70,5 +70,26 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(200)
                     .body("$", hasSize(0));
         }
+
+        @Test
+        @DisplayName("Deve retornar lista com todos os atendimentos cadastrados")
+        void shouldReturnAllRegisteredAppointments() {
+            String patientId = createPatient();
+            String doctorId = createDoctor();
+
+            withAuth()
+                    .body(Map.of("patientId", patientId, "doctorId", doctorId, "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments");
+
+            withAuth()
+                    .get("/api/v1/appointments")
+                    .then()
+                    .statusCode(200)
+                    .body("$", hasSize(1))
+                    .body("[0].id", notNullValue())
+                    .body("[0].status", equalTo("OPEN"))
+                    .body("[0].patient.id", equalTo(patientId))
+                    .body("[0].doctor.id", equalTo(doctorId));
+        }
     }
 }
