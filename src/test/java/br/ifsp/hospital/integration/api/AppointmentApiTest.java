@@ -280,6 +280,20 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
         }
 
         @Test
+        @DisplayName("Deve retornar 401 ao criar atendimento sem token de autenticação")
+        void shouldReturn401WhenCreatingAppointmentWithoutAuthToken() {
+            withoutAuth()
+                    .body(Map.of(
+                            "patientId", "00000000-0000-0000-0000-000000000000",
+                            "doctorId", "00000000-0000-0000-0000-000000000000",
+                            "scheduledAt", futureDateTime()
+                    ))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(401);
+        }
+
+        @Test
         @DisplayName("Deve retornar 422 ao criar atendimento com paciente já com atendimento aberto")
         void shouldReturn422WhenPatientAlreadyHasOpenAppointment() {
             String patientId = createPatient();
