@@ -5,11 +5,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.hamcrest.Matchers.*;
 
 @ApiTest
 @DisplayName("Testes de API – Pacientes")
 class PatientApiTest extends BaseApiIntegrationTest {
+
+    private Map<String, Object> buildPatient() {
+        return Map.of(
+                "name", faker.name().fullName(),
+                "document", faker.numerify("###.###.###-##"),
+                "insuranceType", "BASIC"
+        );
+    }
 
     @Nested
     @DisplayName("GET /api/v1/patients")
@@ -24,5 +34,20 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .statusCode(200)
                     .body("$", hasSize(0));
         }
+
+        @Test
+        @DisplayName("Deve retornar lista com todos os pacientes cadastrados")
+        void shouldReturnAllRegisteredPatients() {
+            withAuth().body(buildPatient()).post("/api/v1/patients");
+            withAuth().body(buildPatient()).post("/api/v1/patients");
+
+            withAuth()
+                    .get("/api/v1/patients")
+                    .then()
+                    .statusCode(200)
+                    .body("$", hasSize(2));
+        }
     }
 }
+
+
