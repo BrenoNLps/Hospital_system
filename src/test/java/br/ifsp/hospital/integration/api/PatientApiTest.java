@@ -87,6 +87,21 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .statusCode(201)
                     .body("insuranceType", equalTo("PREMIUM"));
         }
+
+        @Test
+        @DisplayName("Deve criar paciente com insuranceType NONE e retornar 201")
+        void shouldCreatePatientWithNoneInsuranceAndReturn201() {
+            withAuth()
+                    .body(Map.of(
+                            "name", faker.name().fullName(),
+                            "document", faker.numerify("###.###.###-##"),
+                            "insuranceType", "NONE"
+                    ))
+                    .post("/api/v1/patients")
+                    .then()
+                    .statusCode(201)
+                    .body("insuranceType", equalTo("NONE"));
+        }
     }
 
     @Nested
