@@ -80,6 +80,21 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(400);
         }
+
+        @Test
+        @DisplayName("Deve permitir registro sem token Bearer no header")
+        void shouldAllowRegisterWithoutBearerToken() {
+            withoutAuth()
+                    .body(Map.of(
+                            "name", faker.name().firstName(),
+                            "lastname", faker.name().lastName(),
+                            "email", faker.internet().emailAddress(),
+                            "password", "Test@1234"
+                    ))
+                    .post("/api/v1/register")
+                    .then()
+                    .statusCode(201);
+        }
     }
 
 }
