@@ -341,6 +341,37 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
         }
 
         @Test
+        @DisplayName("Deve retornar 422 ao reagendar além do limite máximo de reagendamentos")
+        void shouldReturn422WhenMaxReschedulesExceeded() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            for (int i = 1; i <= 3; i++) {
+                String rescheduleDate = LocalDateTime.now().plusDays(i * 7)
+                        .withHour(10).withMinute(0).withSecond(0).withNano(0)
+                        .format(FORMATTER);
+                withAuth()
+                        .body(Map.of("newScheduledAt", rescheduleDate))
+                        .patch("/api/v1/appointments/" + appointmentId + "/reschedule");
+            }
+
+            String extraDate = LocalDateTime.now().plusDays(28)
+                    .withHour(10).withMinute(0).withSecond(0).withNano(0)
+                    .format(FORMATTER);
+
+            withAuth()
+                    .body(Map.of("newScheduledAt", extraDate))
+                    .patch("/api/v1/appointments/" + appointmentId + "/reschedule")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve retornar 401 ao reagendar atendimento sem token de autenticação")
         void shouldReturn401WhenReschedulingWithoutAuthToken() {
             withoutAuth()
