@@ -119,6 +119,20 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .body("token", notNullValue());
         }
 
+        @Test
+        @DisplayName("Deve retornar 401 ao autenticar com senha incorreta")
+        void shouldReturn401WhenAuthenticatingWithWrongPassword() {
+            String email = faker.internet().emailAddress();
 
+            withoutAuth()
+                    .body(Map.of("name", "Test", "lastname", "User", "email", email, "password", "Test@1234"))
+                    .post("/api/v1/register");
+
+            withoutAuth()
+                    .body(Map.of("username", email, "password", "SenhaErrada@999"))
+                    .post("/api/v1/authenticate")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
