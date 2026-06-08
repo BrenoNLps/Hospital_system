@@ -185,5 +185,15 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .statusCode(409)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao criar médico sem token de autenticação")
+        void shouldReturn401WhenCreatingDoctorWithoutAuthToken() {
+            withoutAuth()
+                    .body(buildDoctor())
+                    .post("/api/v1/doctors")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
