@@ -231,5 +231,15 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .statusCode(404)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao buscar médico com ID em formato inválido")
+        void shouldReturn400WhenDoctorIdIsInvalid() {
+            withAuth()
+                    .get("/api/v1/doctors/id-invalido")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 }
