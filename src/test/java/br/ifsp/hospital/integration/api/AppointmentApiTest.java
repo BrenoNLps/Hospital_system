@@ -212,4 +212,26 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @DisplayName("POST /api/v1/appointments")
+    class Create {
+
+        @Test
+        @DisplayName("Deve criar atendimento com dados válidos e retornar 201 com status OPEN")
+        void shouldCreateAppointmentWithValidDataAndReturn201() {
+            String patientId = createPatient();
+            String doctorId = createDoctor();
+
+            withAuth()
+                    .body(Map.of("patientId", patientId, "doctorId", doctorId, "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .body("id", notNullValue())
+                    .body("status", equalTo("OPEN"))
+                    .body("patient.id", equalTo(patientId))
+                    .body("doctor.id", equalTo(doctorId));
+        }
+    }
 }
