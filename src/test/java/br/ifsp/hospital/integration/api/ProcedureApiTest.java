@@ -167,5 +167,15 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .statusCode(404)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao buscar procedimento com ID em formato inválido")
+        void shouldReturn400WhenProcedureIdIsInvalid() {
+            withAuth()
+                    .get("/api/v1/procedures/id-invalido")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 }
