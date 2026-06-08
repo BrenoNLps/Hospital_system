@@ -196,4 +196,30 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @DisplayName("GET /api/v1/doctors/{id}")
+    class FindById {
+
+        @Test
+        @DisplayName("Deve retornar médico quando ID existente")
+        void shouldReturnDoctorWhenIdExists() {
+            Map<String, Object> doctor = buildDoctor();
+            String id = withAuth()
+                    .body(doctor)
+                    .post("/api/v1/doctors")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .get("/api/v1/doctors/" + id)
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(id))
+                    .body("name", equalTo(doctor.get("name")))
+                    .body("specialty", equalTo(doctor.get("specialty")))
+                    .body("license", equalTo(doctor.get("license")));
+        }
+    }
 }
