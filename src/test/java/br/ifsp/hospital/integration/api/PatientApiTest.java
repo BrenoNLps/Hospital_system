@@ -183,6 +183,30 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(400);
         }
+
+        @Test
+        @DisplayName("Deve retornar 409 ao criar paciente com documento duplicado")
+        void shouldReturn409WhenDocumentIsDuplicate() {
+            String document = faker.numerify("###.###.###-##");
+
+            withAuth()
+                    .body(Map.of(
+                            "name", faker.name().fullName(),
+                            "document", document,
+                            "insuranceType", "BASIC"
+                    ))
+                    .post("/api/v1/patients");
+
+            withAuth()
+                    .body(Map.of(
+                            "name", faker.name().fullName(),
+                            "document", document,
+                            "insuranceType", "BASIC"
+                    ))
+                    .post("/api/v1/patients")
+                    .then()
+                    .statusCode(409);
+        }
     }
 
     @Nested
