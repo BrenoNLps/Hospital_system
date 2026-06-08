@@ -241,5 +241,14 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .statusCode(400)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao buscar médico sem token de autenticação")
+        void shouldReturn401WhenFindingDoctorWithoutAuthToken() {
+            withoutAuth()
+                    .get("/api/v1/doctors/00000000-0000-0000-0000-000000000000")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
