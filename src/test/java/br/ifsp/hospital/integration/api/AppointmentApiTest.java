@@ -319,6 +319,16 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class Reschedule {
 
         @Test
+        @DisplayName("Deve retornar 401 ao reagendar atendimento sem token de autenticação")
+        void shouldReturn401WhenReschedulingWithoutAuthToken() {
+            withoutAuth()
+                    .body(Map.of("newScheduledAt", futureDateTime()))
+                    .patch("/api/v1/appointments/00000000-0000-0000-0000-000000000000/reschedule")
+                    .then()
+                    .statusCode(401);
+        }
+
+        @Test
         @DisplayName("Deve retornar 400 ao reagendar atendimento com data no passado")
         void shouldReturn400WhenRescheduleDateIsInThePast() {
             String appointmentId = withAuth()
