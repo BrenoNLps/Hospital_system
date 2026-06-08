@@ -128,5 +128,15 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .body("patient.id", equalTo(patientId))
                     .body("doctor.id", equalTo(doctorId));
         }
+
+        @Test
+        @DisplayName("Deve retornar 404 ao buscar atendimento com ID inexistente")
+        void shouldReturn404WhenAppointmentIdNotFound() {
+            withAuth()
+                    .get("/api/v1/appointments/00000000-0000-0000-0000-000000000000")
+                    .then()
+                    .statusCode(404)
+                    .body("message", notNullValue());
+        }
     }
 }
