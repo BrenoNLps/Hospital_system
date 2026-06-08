@@ -319,6 +319,27 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class Close {
 
         @Test
+        @DisplayName("Deve retornar 422 ao fechar atendimento com procedimentos pendentes")
+        void shouldReturn422WhenAppointmentHasOpenProcedures() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .body(Map.of("procedureId", createProcedure(), "quantity", 1))
+                    .post("/api/v1/appointments/" + appointmentId + "/procedures");
+
+            withAuth()
+                    .patch("/api/v1/appointments/" + appointmentId + "/close")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve fechar atendimento sem procedimentos pendentes e retornar 200 com status CLOSED")
         void shouldCloseAppointmentAndReturn200WithStatusClosed() {
             String appointmentId = withAuth()
