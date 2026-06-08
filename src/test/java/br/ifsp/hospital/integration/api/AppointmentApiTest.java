@@ -57,5 +57,18 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                 .format(FORMATTER);
     }
 
+    @Nested
+    @DisplayName("GET /api/v1/appointments")
+    class FindAll {
 
+        @Test
+        @DisplayName("Deve retornar lista vazia quando nenhum atendimento está cadastrado")
+        void shouldReturnEmptyListWhenNoAppointmentsExist() {
+            withAuth()
+                    .get("/api/v1/appointments")
+                    .then()
+                    .statusCode(200)
+                    .body("$", hasSize(0));
+        }
+    }
 }
