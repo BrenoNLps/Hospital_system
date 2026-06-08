@@ -207,6 +207,16 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(409);
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao criar paciente sem token de autenticação")
+        void shouldReturn401WhenCreatingPatientWithoutAuthToken() {
+            withoutAuth()
+                    .body(buildPatient())
+                    .post("/api/v1/patients")
+                    .then()
+                    .statusCode(401);
+        }
     }
 
     @Nested
