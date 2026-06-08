@@ -87,6 +87,15 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(404);
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao buscar paciente com ID em formato inválido")
+        void shouldReturn400WhenPatientIdIsInvalid() {
+            withAuth()
+                    .get("/api/v1/patients/id-invalido")
+                    .then()
+                    .statusCode(400);
+        }
     }
 }
 
