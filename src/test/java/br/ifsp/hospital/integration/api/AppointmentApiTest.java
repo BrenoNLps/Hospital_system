@@ -315,6 +315,35 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     }
 
     @Nested
+    @DisplayName("PATCH /api/v1/appointments/{id}/reschedule")
+    class Reschedule {
+
+        @Test
+        @DisplayName("Deve reagendar atendimento e retornar 200 com rescheduleCount incrementado")
+        void shouldRescheduleAppointmentAndReturn200WithIncrementedCount() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            String newScheduledAt = LocalDateTime.now().plusDays(3)
+                    .withHour(14).withMinute(0).withSecond(0).withNano(0)
+                    .format(FORMATTER);
+
+            withAuth()
+                    .body(Map.of("newScheduledAt", newScheduledAt))
+                    .patch("/api/v1/appointments/" + appointmentId + "/reschedule")
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(appointmentId))
+                    .body("rescheduleCount", equalTo(1))
+                    .body("scheduledAt", equalTo(newScheduledAt));
+        }
+    }
+
+    @Nested
     @DisplayName("PATCH /api/v1/appointments/{id}/bill")
     class MarkAsBilled {
 
