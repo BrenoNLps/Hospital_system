@@ -78,5 +78,16 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .body("name", equalTo(procedure.get("name")))
                     .body("cost", equalTo(((Double) procedure.get("cost")).floatValue()));
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao criar procedimento com nome nulo")
+        void shouldReturn400WhenNameIsNull() {
+            withAuth()
+                    .body(Map.of("cost", 150.00))
+                    .post("/api/v1/procedures")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 }
