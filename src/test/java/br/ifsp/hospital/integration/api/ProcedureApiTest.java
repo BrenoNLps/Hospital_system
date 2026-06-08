@@ -111,5 +111,16 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .statusCode(400)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao criar procedimento com custo negativo")
+        void shouldReturn400WhenCostIsNegative() {
+            withAuth()
+                    .body(Map.of("name", faker.medical().medicineName(), "cost", -1.00))
+                    .post("/api/v1/procedures")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 }
