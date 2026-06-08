@@ -78,6 +78,15 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .statusCode(200)
                     .body("id", equalTo(id));
         }
+
+        @Test
+        @DisplayName("Deve retornar 404 ao buscar paciente com ID inexistente")
+        void shouldReturn404WhenPatientIdNotFound() {
+            withAuth()
+                    .get("/api/v1/patients/00000000-0000-0000-0000-000000000000")
+                    .then()
+                    .statusCode(404);
+        }
     }
 }
 
