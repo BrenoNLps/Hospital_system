@@ -134,5 +134,15 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(401);
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao autenticar com email inexistente")
+        void shouldReturn401WhenAuthenticatingWithNonExistentEmail() {
+            withoutAuth()
+                    .body(Map.of("username", "naoexiste@test.com", "password", "Test@1234"))
+                    .post("/api/v1/authenticate")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
