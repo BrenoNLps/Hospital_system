@@ -89,5 +89,16 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .statusCode(400)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao criar procedimento com nome em branco")
+        void shouldReturn400WhenNameIsBlank() {
+            withAuth()
+                    .body(Map.of("name", "   ", "cost", 150.00))
+                    .post("/api/v1/procedures")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 }
