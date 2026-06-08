@@ -319,6 +319,23 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class MarkAsBilled {
 
         @Test
+        @DisplayName("Deve retornar 422 ao faturar atendimento que não está CLOSED")
+        void shouldReturn422WhenAppointmentIsNotClosed() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .patch("/api/v1/appointments/" + appointmentId + "/bill")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve faturar atendimento fechado e retornar 200 com status BILLED")
         void shouldMarkAppointmentAsBilledAndReturn200() {
             String appointmentId = withAuth()
