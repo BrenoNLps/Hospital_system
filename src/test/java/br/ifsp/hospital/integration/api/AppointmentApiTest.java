@@ -278,5 +278,25 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(404)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 422 ao criar atendimento com paciente já com atendimento aberto")
+        void shouldReturn422WhenPatientAlreadyHasOpenAppointment() {
+            String patientId = createPatient();
+            String doctorId = createDoctor();
+
+            withAuth()
+                    .body(Map.of("patientId", patientId, "doctorId", doctorId, "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201);
+
+            withAuth()
+                    .body(Map.of("patientId", patientId, "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
     }
 }
