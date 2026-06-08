@@ -319,6 +319,24 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class AddProcedure {
 
         @Test
+        @DisplayName("Deve retornar 400 ao adicionar procedimento com quantidade zero ou negativa")
+        void shouldReturn400WhenQuantityIsZeroOrNegative() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .body(Map.of("procedureId", createProcedure(), "quantity", 0))
+                    .post("/api/v1/appointments/" + appointmentId + "/procedures")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve adicionar procedimento ao atendimento e retornar 200 com procedimento na lista")
         void shouldAddProcedureToAppointmentAndReturn200() {
             String appointmentId = withAuth()
