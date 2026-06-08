@@ -115,6 +115,20 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(400);
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao criar paciente com nome em branco")
+        void shouldReturn400WhenNameIsBlank() {
+            withAuth()
+                    .body(Map.of(
+                            "name", "   ",
+                            "document", faker.numerify("###.###.###-##"),
+                            "insuranceType", "BASIC"
+                    ))
+                    .post("/api/v1/patients")
+                    .then()
+                    .statusCode(400);
+        }
     }
 
     @Nested
