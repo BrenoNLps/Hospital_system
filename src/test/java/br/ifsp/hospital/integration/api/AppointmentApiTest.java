@@ -319,6 +319,26 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class AddProcedure {
 
         @Test
+        @DisplayName("Deve retornar 422 ao adicionar procedimento em atendimento que não está OPEN")
+        void shouldReturn422WhenAppointmentIsNotOpen() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth().patch("/api/v1/appointments/" + appointmentId + "/close");
+
+            withAuth()
+                    .body(Map.of("procedureId", createProcedure(), "quantity", 1))
+                    .post("/api/v1/appointments/" + appointmentId + "/procedures")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve retornar 404 ao adicionar procedimento com procedimento inexistente")
         void shouldReturn404WhenProcedureNotFound() {
             String appointmentId = withAuth()
