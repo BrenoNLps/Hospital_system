@@ -61,4 +61,25 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @DisplayName("POST /api/v1/doctors")
+    class Create {
+
+        @Test
+        @DisplayName("Deve criar médico com dados válidos e retornar 201")
+        void shouldCreateDoctorWithValidDataAndReturn201() {
+            Map<String, Object> doctor = buildDoctor();
+
+            withAuth()
+                    .body(doctor)
+                    .post("/api/v1/doctors")
+                    .then()
+                    .statusCode(201)
+                    .body("id", notNullValue())
+                    .body("name", equalTo(doctor.get("name")))
+                    .body("specialty", equalTo(doctor.get("specialty")))
+                    .body("license", equalTo(doctor.get("license")));
+        }
+    }
 }
