@@ -96,6 +96,15 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(400);
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao buscar paciente sem token de autenticação")
+        void shouldReturn401WhenFindingPatientWithoutAuthToken() {
+            withoutAuth()
+                    .get("/api/v1/patients/00000000-0000-0000-0000-000000000000")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
 
