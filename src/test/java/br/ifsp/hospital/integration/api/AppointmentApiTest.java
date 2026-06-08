@@ -319,6 +319,24 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class AddProcedure {
 
         @Test
+        @DisplayName("Deve retornar 404 ao adicionar procedimento com procedimento inexistente")
+        void shouldReturn404WhenProcedureNotFound() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .body(Map.of("procedureId", "00000000-0000-0000-0000-000000000000", "quantity", 1))
+                    .post("/api/v1/appointments/" + appointmentId + "/procedures")
+                    .then()
+                    .statusCode(404)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve retornar 404 ao adicionar procedimento com atendimento inexistente")
         void shouldReturn404WhenAppointmentNotFound() {
             withAuth()
