@@ -233,5 +233,20 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .body("patient.id", equalTo(patientId))
                     .body("doctor.id", equalTo(doctorId));
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao criar atendimento com data no passado")
+        void shouldReturn400WhenScheduledAtIsInThePast() {
+            String patientId = createPatient();
+            String doctorId = createDoctor();
+            String pastDate = LocalDateTime.now().minusDays(1).format(FORMATTER);
+
+            withAuth()
+                    .body(Map.of("patientId", patientId, "doctorId", doctorId, "scheduledAt", pastDate))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 }
