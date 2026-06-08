@@ -221,5 +221,15 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .body("specialty", equalTo(doctor.get("specialty")))
                     .body("license", equalTo(doctor.get("license")));
         }
+
+        @Test
+        @DisplayName("Deve retornar 404 ao buscar médico com ID inexistente")
+        void shouldReturn404WhenDoctorIdNotFound() {
+            withAuth()
+                    .get("/api/v1/doctors/00000000-0000-0000-0000-000000000000")
+                    .then()
+                    .statusCode(404)
+                    .body("message", notNullValue());
+        }
     }
 }
