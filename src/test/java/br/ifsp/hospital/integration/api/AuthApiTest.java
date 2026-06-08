@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.*;
 
 @ApiTest
-@DisplayName("Testes de API – Autenticação")
+@DisplayName("Testes de API – Usuário")
 class AuthApiTest extends BaseApiIntegrationTest {
 
     @Nested
@@ -101,15 +101,20 @@ class AuthApiTest extends BaseApiIntegrationTest {
     @Nested
     @DisplayName("POST /api/v1/authenticate")
     class Authenticate {
+
+        private void registerUser(String email, String password) {
+            withoutAuth()
+                    .body(Map.of("name", faker.name().firstName(), "lastname", faker.name().lastName(),
+                            "email", email, "password", password))
+                    .post("/api/v1/register");
+        }
+
         @Test
         @DisplayName("Deve autenticar com credenciais válidas e retornar 200 com token JWT")
         void shouldAuthenticateWithValidCredentialsAndReturnToken() {
             String email = faker.internet().emailAddress();
             String password = "Test@1234";
-
-            withoutAuth()
-                    .body(Map.of("name", "Test", "lastname", "User", "email", email, "password", password))
-                    .post("/api/v1/register");
+            registerUser(email, password);
 
             withoutAuth()
                     .body(Map.of("username", email, "password", password))
@@ -123,10 +128,7 @@ class AuthApiTest extends BaseApiIntegrationTest {
         @DisplayName("Deve retornar 401 ao autenticar com senha incorreta")
         void shouldReturn401WhenAuthenticatingWithWrongPassword() {
             String email = faker.internet().emailAddress();
-
-            withoutAuth()
-                    .body(Map.of("name", "Test", "lastname", "User", "email", email, "password", "Test@1234"))
-                    .post("/api/v1/register");
+            registerUser(email, "Test@1234");
 
             withoutAuth()
                     .body(Map.of("username", email, "password", "SenhaErrada@999"))
@@ -150,10 +152,7 @@ class AuthApiTest extends BaseApiIntegrationTest {
         void shouldAllowAuthenticateWithoutAuthToken() {
             String email = faker.internet().emailAddress();
             String password = "Test@1234";
-
-            withoutAuth()
-                    .body(Map.of("name", "Test", "lastname", "User", "email", email, "password", password))
-                    .post("/api/v1/register");
+            registerUser(email, password);
 
             withoutAuth()
                     .body(Map.of("username", email, "password", password))
