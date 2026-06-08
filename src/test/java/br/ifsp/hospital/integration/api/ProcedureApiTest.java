@@ -122,5 +122,15 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .statusCode(400)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao criar procedimento sem token de autenticação")
+        void shouldReturn401WhenCreatingProcedureWithoutAuthToken() {
+            withoutAuth()
+                    .body(buildProcedure())
+                    .post("/api/v1/procedures")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
