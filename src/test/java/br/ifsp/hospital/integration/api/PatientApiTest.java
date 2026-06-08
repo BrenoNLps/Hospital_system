@@ -45,7 +45,11 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .get("/api/v1/patients")
                     .then()
                     .statusCode(200)
-                    .body("$", hasSize(2));
+                    .body("$", hasSize(2))
+                    .body("[0].id", notNullValue())
+                    .body("[0].name", notNullValue())
+                    .body("[0].document", notNullValue())
+                    .body("[0].insuranceType", notNullValue());
         }
 
         @Test
@@ -65,41 +69,50 @@ class PatientApiTest extends BaseApiIntegrationTest {
         @Test
         @DisplayName("Deve criar paciente com dados válidos e retornar 201")
         void shouldCreatePatientWithValidDataAndReturn201() {
+            Map<String, Object> patient = buildPatient();
+
             withAuth()
-                    .body(buildPatient())
+                    .body(patient)
                     .post("/api/v1/patients")
                     .then()
                     .statusCode(201)
-                    .body("id", notNullValue());
+                    .body("id", notNullValue())
+                    .body("name", equalTo(patient.get("name")))
+                    .body("document", equalTo(patient.get("document")))
+                    .body("insuranceType", equalTo("BASIC"));
         }
 
         @Test
         @DisplayName("Deve criar paciente com insuranceType PREMIUM e retornar 201")
         void shouldCreatePatientWithPremiumInsuranceAndReturn201() {
+            String name = faker.name().fullName();
+            String document = faker.numerify("###.###.###-##");
+
             withAuth()
-                    .body(Map.of(
-                            "name", faker.name().fullName(),
-                            "document", faker.numerify("###.###.###-##"),
-                            "insuranceType", "PREMIUM"
-                    ))
+                    .body(Map.of("name", name, "document", document, "insuranceType", "PREMIUM"))
                     .post("/api/v1/patients")
                     .then()
                     .statusCode(201)
+                    .body("id", notNullValue())
+                    .body("name", equalTo(name))
+                    .body("document", equalTo(document))
                     .body("insuranceType", equalTo("PREMIUM"));
         }
 
         @Test
         @DisplayName("Deve criar paciente com insuranceType NONE e retornar 201")
         void shouldCreatePatientWithNoneInsuranceAndReturn201() {
+            String name = faker.name().fullName();
+            String document = faker.numerify("###.###.###-##");
+
             withAuth()
-                    .body(Map.of(
-                            "name", faker.name().fullName(),
-                            "document", faker.numerify("###.###.###-##"),
-                            "insuranceType", "NONE"
-                    ))
+                    .body(Map.of("name", name, "document", document, "insuranceType", "NONE"))
                     .post("/api/v1/patients")
                     .then()
                     .statusCode(201)
+                    .body("id", notNullValue())
+                    .body("name", equalTo(name))
+                    .body("document", equalTo(document))
                     .body("insuranceType", equalTo("NONE"));
         }
 
@@ -113,7 +126,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/patients")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -127,7 +141,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/patients")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -140,7 +155,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/patients")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -154,7 +170,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/patients")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -167,7 +184,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/patients")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -181,7 +199,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/patients")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -190,22 +209,15 @@ class PatientApiTest extends BaseApiIntegrationTest {
             String document = faker.numerify("###.###.###-##");
 
             withAuth()
-                    .body(Map.of(
-                            "name", faker.name().fullName(),
-                            "document", document,
-                            "insuranceType", "BASIC"
-                    ))
+                    .body(Map.of("name", faker.name().fullName(), "document", document, "insuranceType", "BASIC"))
                     .post("/api/v1/patients");
 
             withAuth()
-                    .body(Map.of(
-                            "name", faker.name().fullName(),
-                            "document", document,
-                            "insuranceType", "BASIC"
-                    ))
+                    .body(Map.of("name", faker.name().fullName(), "document", document, "insuranceType", "BASIC"))
                     .post("/api/v1/patients")
                     .then()
-                    .statusCode(409);
+                    .statusCode(409)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -226,8 +238,9 @@ class PatientApiTest extends BaseApiIntegrationTest {
         @Test
         @DisplayName("Deve retornar paciente quando ID existente")
         void shouldReturnPatientWhenIdExists() {
+            Map<String, Object> patient = buildPatient();
             String id = withAuth()
-                    .body(buildPatient())
+                    .body(patient)
                     .post("/api/v1/patients")
                     .then()
                     .statusCode(201)
@@ -237,7 +250,10 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .get("/api/v1/patients/" + id)
                     .then()
                     .statusCode(200)
-                    .body("id", equalTo(id));
+                    .body("id", equalTo(id))
+                    .body("name", equalTo(patient.get("name")))
+                    .body("document", equalTo(patient.get("document")))
+                    .body("insuranceType", equalTo("BASIC"));
         }
 
         @Test
@@ -246,7 +262,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
             withAuth()
                     .get("/api/v1/patients/00000000-0000-0000-0000-000000000000")
                     .then()
-                    .statusCode(404);
+                    .statusCode(404)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -255,7 +272,8 @@ class PatientApiTest extends BaseApiIntegrationTest {
             withAuth()
                     .get("/api/v1/patients/id-invalido")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -268,5 +286,3 @@ class PatientApiTest extends BaseApiIntegrationTest {
         }
     }
 }
-
-

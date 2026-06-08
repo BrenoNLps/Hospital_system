@@ -30,7 +30,8 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .post("/api/v1/register")
                     .then()
                     .statusCode(201)
-                    .body("id", notNullValue());
+                    .body("id", notNullValue())
+                    .body("id", matchesPattern("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"));
         }
 
         @Test
@@ -50,7 +51,8 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .body(body)
                     .post("/api/v1/register")
                     .then()
-                    .statusCode(409);
+                    .statusCode(409)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -64,7 +66,8 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/register")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -78,7 +81,8 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/register")
                     .then()
-                    .statusCode(400);
+                    .statusCode(400)
+                    .body("message", notNullValue());
         }
 
         @Test
@@ -93,7 +97,8 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     ))
                     .post("/api/v1/register")
                     .then()
-                    .statusCode(201);
+                    .statusCode(201)
+                    .body("id", notNullValue());
         }
     }
 
@@ -121,7 +126,8 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .post("/api/v1/authenticate")
                     .then()
                     .statusCode(200)
-                    .body("token", notNullValue());
+                    .body("token", notNullValue())
+                    .body("token", not(emptyString()));
         }
 
         @Test
@@ -158,7 +164,9 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .body(Map.of("username", email, "password", password))
                     .post("/api/v1/authenticate")
                     .then()
-                    .statusCode(200);
+                    .statusCode(200)
+                    .body("token", notNullValue())
+                    .body("token", not(emptyString()));
         }
     }
 }
