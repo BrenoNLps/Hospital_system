@@ -144,5 +144,22 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(401);
         }
+
+        @Test
+        @DisplayName("Deve permitir autenticação sem token de autenticação")
+        void shouldAllowAuthenticateWithoutAuthToken() {
+            String email = faker.internet().emailAddress();
+            String password = "Test@1234";
+
+            withoutAuth()
+                    .body(Map.of("name", "Test", "lastname", "User", "email", email, "password", password))
+                    .post("/api/v1/register");
+
+            withoutAuth()
+                    .body(Map.of("username", email, "password", password))
+                    .post("/api/v1/authenticate")
+                    .then()
+                    .statusCode(200);
+        }
     }
 }
