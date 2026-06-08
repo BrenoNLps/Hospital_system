@@ -472,6 +472,16 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class AddProcedure {
 
         @Test
+        @DisplayName("Deve retornar 401 ao adicionar procedimento sem token de autenticação")
+        void shouldReturn401WhenAddingProcedureWithoutAuthToken() {
+            withoutAuth()
+                    .body(Map.of("procedureId", "00000000-0000-0000-0000-000000000000", "quantity", 1))
+                    .post("/api/v1/appointments/00000000-0000-0000-0000-000000000000/procedures")
+                    .then()
+                    .statusCode(401);
+        }
+
+        @Test
         @DisplayName("Deve retornar 422 ao adicionar procedimento em atendimento que não está OPEN")
         void shouldReturn422WhenAppointmentIsNotOpen() {
             String appointmentId = withAuth()
