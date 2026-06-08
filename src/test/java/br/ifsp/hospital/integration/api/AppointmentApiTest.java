@@ -101,4 +101,32 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @DisplayName("GET /api/v1/appointments/{id}")
+    class FindById {
+
+        @Test
+        @DisplayName("Deve retornar atendimento quando ID existente")
+        void shouldReturnAppointmentWhenIdExists() {
+            String patientId = createPatient();
+            String doctorId = createDoctor();
+
+            String id = withAuth()
+                    .body(Map.of("patientId", patientId, "doctorId", doctorId, "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .get("/api/v1/appointments/" + id)
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(id))
+                    .body("status", equalTo("OPEN"))
+                    .body("patient.id", equalTo(patientId))
+                    .body("doctor.id", equalTo(doctorId));
+        }
+    }
 }
