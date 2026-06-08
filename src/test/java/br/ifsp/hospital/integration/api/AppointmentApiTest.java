@@ -368,6 +368,15 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class MarkAsBilled {
 
         @Test
+        @DisplayName("Deve retornar 401 ao faturar atendimento sem token de autenticação")
+        void shouldReturn401WhenMarkingAsBilledWithoutAuthToken() {
+            withoutAuth()
+                    .patch("/api/v1/appointments/00000000-0000-0000-0000-000000000000/bill")
+                    .then()
+                    .statusCode(401);
+        }
+
+        @Test
         @DisplayName("Deve retornar 422 ao faturar atendimento que não está CLOSED")
         void shouldReturn422WhenAppointmentIsNotClosed() {
             String appointmentId = withAuth()
