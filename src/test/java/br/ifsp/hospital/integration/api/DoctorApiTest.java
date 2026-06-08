@@ -51,5 +51,14 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .body("[0].specialty", notNullValue())
                     .body("[0].license", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao listar médicos sem token de autenticação")
+        void shouldReturn401WhenListingDoctorsWithoutAuthToken() {
+            withoutAuth()
+                    .get("/api/v1/doctors")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
