@@ -82,8 +82,8 @@ class AuthApiTest extends BaseApiIntegrationTest {
         }
 
         @Test
-        @DisplayName("Deve permitir registro sem token Bearer no header")
-        void shouldAllowRegisterWithoutBearerToken() {
+        @DisplayName("Deve permitir registro sem token de autenticação")
+        void shouldAllowRegisterWithoutAuthToken() {
             withoutAuth()
                     .body(Map.of(
                             "name", faker.name().firstName(),
@@ -97,4 +97,28 @@ class AuthApiTest extends BaseApiIntegrationTest {
         }
     }
 
+
+    @Nested
+    @DisplayName("POST /api/v1/authenticate")
+    class Authenticate {
+        @Test
+        @DisplayName("Deve autenticar com credenciais válidas e retornar 200 com token JWT")
+        void shouldAuthenticateWithValidCredentialsAndReturnToken() {
+            String email = faker.internet().emailAddress();
+            String password = "Test@1234";
+
+            withoutAuth()
+                    .body(Map.of("name", "Test", "lastname", "User", "email", email, "password", password))
+                    .post("/api/v1/register");
+
+            withoutAuth()
+                    .body(Map.of("username", email, "password", password))
+                    .post("/api/v1/authenticate")
+                    .then()
+                    .statusCode(200)
+                    .body("token", notNullValue());
+        }
+
+
+    }
 }
