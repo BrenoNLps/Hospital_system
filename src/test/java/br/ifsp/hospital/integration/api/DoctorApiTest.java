@@ -168,5 +168,22 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .statusCode(400)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 409 ao criar médico com CRM duplicado")
+        void shouldReturn409WhenLicenseIsDuplicate() {
+            String license = faker.numerify("CRM-SP ######");
+
+            withAuth()
+                    .body(Map.of("name", faker.name().fullName(), "specialty", faker.medical().medicineName(), "license", license))
+                    .post("/api/v1/doctors");
+
+            withAuth()
+                    .body(Map.of("name", faker.name().fullName(), "specialty", faker.medical().medicineName(), "license", license))
+                    .post("/api/v1/doctors")
+                    .then()
+                    .statusCode(409)
+                    .body("message", notNullValue());
+        }
     }
 }
