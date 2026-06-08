@@ -419,6 +419,15 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class Close {
 
         @Test
+        @DisplayName("Deve retornar 401 ao fechar atendimento sem token de autenticação")
+        void shouldReturn401WhenClosingAppointmentWithoutAuthToken() {
+            withoutAuth()
+                    .patch("/api/v1/appointments/00000000-0000-0000-0000-000000000000/close")
+                    .then()
+                    .statusCode(401);
+        }
+
+        @Test
         @DisplayName("Deve retornar 422 ao fechar atendimento com procedimentos pendentes")
         void shouldReturn422WhenAppointmentHasOpenProcedures() {
             String appointmentId = withAuth()
