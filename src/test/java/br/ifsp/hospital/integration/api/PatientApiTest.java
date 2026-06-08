@@ -59,6 +59,22 @@ class PatientApiTest extends BaseApiIntegrationTest {
     }
 
     @Nested
+    @DisplayName("POST /api/v1/patients")
+    class Create {
+
+        @Test
+        @DisplayName("Deve criar paciente com dados válidos e retornar 201")
+        void shouldCreatePatientWithValidDataAndReturn201() {
+            withAuth()
+                    .body(buildPatient())
+                    .post("/api/v1/patients")
+                    .then()
+                    .statusCode(201)
+                    .body("id", notNullValue());
+        }
+    }
+
+    @Nested
     @DisplayName("GET /api/v1/patients/{id}")
     class FindById {
 
