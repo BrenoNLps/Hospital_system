@@ -313,4 +313,33 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .body("message", notNullValue());
         }
     }
+
+    @Nested
+    @DisplayName("POST /api/v1/appointments/{id}/procedures")
+    class AddProcedure {
+
+        @Test
+        @DisplayName("Deve adicionar procedimento ao atendimento e retornar 200 com procedimento na lista")
+        void shouldAddProcedureToAppointmentAndReturn200() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            String procedureId = createProcedure();
+
+            withAuth()
+                    .body(Map.of("procedureId", procedureId, "quantity", 1))
+                    .post("/api/v1/appointments/" + appointmentId + "/procedures")
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(appointmentId))
+                    .body("procedures", hasSize(1))
+                    .body("procedures[0].procedureName", notNullValue())
+                    .body("procedures[0].quantity", equalTo(1))
+                    .body("procedures[0].totalCost", notNullValue());
+        }
+    }
 }
