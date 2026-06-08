@@ -49,5 +49,14 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .body("[0].name", notNullValue())
                     .body("[0].cost", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao listar procedimentos sem token de autenticação")
+        void shouldReturn401WhenListingProceduresWithoutAuthToken() {
+            withoutAuth()
+                    .get("/api/v1/procedures")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
