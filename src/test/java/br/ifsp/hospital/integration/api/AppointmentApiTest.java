@@ -263,5 +263,20 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(404)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 404 ao criar atendimento com médico inexistente")
+        void shouldReturn404WhenDoctorNotFound() {
+            withAuth()
+                    .body(Map.of(
+                            "patientId", createPatient(),
+                            "doctorId", "00000000-0000-0000-0000-000000000000",
+                            "scheduledAt", futureDateTime()
+                    ))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(404)
+                    .body("message", notNullValue());
+        }
     }
 }
