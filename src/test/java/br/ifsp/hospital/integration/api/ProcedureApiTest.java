@@ -59,4 +59,24 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @DisplayName("POST /api/v1/procedures")
+    class Create {
+
+        @Test
+        @DisplayName("Deve criar procedimento com dados válidos e retornar 201")
+        void shouldCreateProcedureWithValidDataAndReturn201() {
+            Map<String, Object> procedure = buildProcedure();
+
+            withAuth()
+                    .body(procedure)
+                    .post("/api/v1/procedures")
+                    .then()
+                    .statusCode(201)
+                    .body("id", notNullValue())
+                    .body("name", equalTo(procedure.get("name")))
+                    .body("cost", equalTo(((Double) procedure.get("cost")).floatValue()));
+        }
+    }
 }
