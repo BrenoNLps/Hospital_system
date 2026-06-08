@@ -157,5 +157,15 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .body("name", equalTo(procedure.get("name")))
                     .body("cost", equalTo(((Double) procedure.get("cost")).floatValue()));
         }
+
+        @Test
+        @DisplayName("Deve retornar 404 ao buscar procedimento com ID inexistente")
+        void shouldReturn404WhenProcedureIdNotFound() {
+            withAuth()
+                    .get("/api/v1/procedures/00000000-0000-0000-0000-000000000000")
+                    .then()
+                    .statusCode(404)
+                    .body("message", notNullValue());
+        }
     }
 }
