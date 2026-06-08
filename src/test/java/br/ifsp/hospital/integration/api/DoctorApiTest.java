@@ -95,5 +95,20 @@ class DoctorApiTest extends BaseApiIntegrationTest {
                     .statusCode(400)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao criar médico com nome em branco")
+        void shouldReturn400WhenNameIsBlank() {
+            withAuth()
+                    .body(Map.of(
+                            "name", "   ",
+                            "specialty", faker.medical().medicineName(),
+                            "license", faker.numerify("CRM-SP ######")
+                    ))
+                    .post("/api/v1/doctors")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 }
