@@ -33,7 +33,25 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .body("id", notNullValue());
         }
 
+        @Test
+        @DisplayName("Deve retornar 409 ao registrar com email já existente")
+        void shouldReturn409WhenRegisteringWithDuplicateEmail() {
+            String email = faker.internet().emailAddress();
+            Map<String, String> body = Map.of(
+                    "name", faker.name().firstName(),
+                    "lastname", faker.name().lastName(),
+                    "email", email,
+                    "password", "Test@1234"
+            );
 
+            withoutAuth().body(body).post("/api/v1/register");
+
+            withoutAuth()
+                    .body(body)
+                    .post("/api/v1/register")
+                    .then()
+                    .statusCode(409);
+        }
     }
 
 }
