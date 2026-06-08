@@ -319,6 +319,28 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class Reschedule {
 
         @Test
+        @DisplayName("Deve retornar 422 ao reagendar para fora do horário de trabalho")
+        void shouldReturn422WhenRescheduleDateIsOutsideWorkingHours() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            String outsideHours = LocalDateTime.now().plusDays(3)
+                    .withHour(19).withMinute(0).withSecond(0).withNano(0)
+                    .format(FORMATTER);
+
+            withAuth()
+                    .body(Map.of("newScheduledAt", outsideHours))
+                    .patch("/api/v1/appointments/" + appointmentId + "/reschedule")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve retornar 401 ao reagendar atendimento sem token de autenticação")
         void shouldReturn401WhenReschedulingWithoutAuthToken() {
             withoutAuth()
