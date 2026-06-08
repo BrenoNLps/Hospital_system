@@ -33,5 +33,21 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .statusCode(200)
                     .body("$", hasSize(0));
         }
+
+        @Test
+        @DisplayName("Deve retornar lista com todos os procedimentos cadastrados")
+        void shouldReturnAllRegisteredProcedures() {
+            withAuth().body(buildProcedure()).post("/api/v1/procedures");
+            withAuth().body(buildProcedure()).post("/api/v1/procedures");
+
+            withAuth()
+                    .get("/api/v1/procedures")
+                    .then()
+                    .statusCode(200)
+                    .body("$", hasSize(2))
+                    .body("[0].id", notNullValue())
+                    .body("[0].name", notNullValue())
+                    .body("[0].cost", notNullValue());
+        }
     }
 }
