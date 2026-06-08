@@ -57,6 +57,28 @@ class PatientApiTest extends BaseApiIntegrationTest {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @DisplayName("GET /api/v1/patients/{id}")
+    class FindById {
+
+        @Test
+        @DisplayName("Deve retornar paciente quando ID existente")
+        void shouldReturnPatientWhenIdExists() {
+            String id = withAuth()
+                    .body(buildPatient())
+                    .post("/api/v1/patients")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .get("/api/v1/patients/" + id)
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(id));
+        }
+    }
 }
 
 
