@@ -319,6 +319,26 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
     class Reschedule {
 
         @Test
+        @DisplayName("Deve retornar 400 ao reagendar atendimento com data no passado")
+        void shouldReturn400WhenRescheduleDateIsInThePast() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            String pastDate = LocalDateTime.now().minusDays(1).format(FORMATTER);
+
+            withAuth()
+                    .body(Map.of("newScheduledAt", pastDate))
+                    .patch("/api/v1/appointments/" + appointmentId + "/reschedule")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
+
+        @Test
         @DisplayName("Deve reagendar atendimento e retornar 200 com rescheduleCount incrementado")
         void shouldRescheduleAppointmentAndReturn200WithIncrementedCount() {
             String appointmentId = withAuth()
