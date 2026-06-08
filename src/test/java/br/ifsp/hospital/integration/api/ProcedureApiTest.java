@@ -133,4 +133,29 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @DisplayName("GET /api/v1/procedures/{id}")
+    class FindById {
+
+        @Test
+        @DisplayName("Deve retornar procedimento quando ID existente")
+        void shouldReturnProcedureWhenIdExists() {
+            Map<String, Object> procedure = buildProcedure();
+            String id = withAuth()
+                    .body(procedure)
+                    .post("/api/v1/procedures")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .get("/api/v1/procedures/" + id)
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(id))
+                    .body("name", equalTo(procedure.get("name")))
+                    .body("cost", equalTo(((Double) procedure.get("cost")).floatValue()));
+        }
+    }
 }
