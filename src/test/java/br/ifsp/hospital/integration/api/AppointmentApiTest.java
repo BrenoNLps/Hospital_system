@@ -91,5 +91,14 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .body("[0].patient.id", equalTo(patientId))
                     .body("[0].doctor.id", equalTo(doctorId));
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao listar atendimentos sem token de autenticação")
+        void shouldReturn401WhenListingAppointmentsWithoutAuthToken() {
+            withoutAuth()
+                    .get("/api/v1/appointments")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
