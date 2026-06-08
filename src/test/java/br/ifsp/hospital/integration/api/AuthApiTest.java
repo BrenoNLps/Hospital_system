@@ -66,6 +66,20 @@ class AuthApiTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(400);
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao registrar com email nulo")
+        void shouldReturn400WhenRegisteringWithNullEmail() {
+            withoutAuth()
+                    .body(Map.of(
+                            "name", faker.name().firstName(),
+                            "lastname", faker.name().lastName(),
+                            "password", "Test@1234"
+                    ))
+                    .post("/api/v1/register")
+                    .then()
+                    .statusCode(400);
+        }
     }
 
 }
