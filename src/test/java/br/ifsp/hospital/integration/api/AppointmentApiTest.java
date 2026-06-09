@@ -635,4 +635,29 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .body("procedures[0].totalCost", notNullValue());
         }
     }
+
+    @Nested
+    @DisplayName("PATCH /api/v1/appointments/{id}/cancel")
+    class Cancel {
+
+        @Test
+        @DisplayName("Deve cancelar atendimento e retornar 200 com status CANCELED")
+        void shouldCancelAppointmentAndReturn200() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .body(Map.of("reason", "Paciente não pode comparecer"))
+                    .patch("/api/v1/appointments/" + appointmentId + "/cancel")
+                    .then()
+                    .statusCode(200)
+                    .body("id", equalTo(appointmentId))
+                    .body("status", equalTo("CANCELED"));
+        }
+    }
+
 }
