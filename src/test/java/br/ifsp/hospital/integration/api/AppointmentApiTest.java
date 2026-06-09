@@ -658,6 +658,24 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .body("id", equalTo(appointmentId))
                     .body("status", equalTo("CANCELED"));
         }
+
+        @Test
+        @DisplayName("Deve retornar 400 ao cancelar atendimento sem motivo")
+        void shouldReturn400WhenCancelReasonIsBlank() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .body(Map.of("reason", ""))
+                    .patch("/api/v1/appointments/" + appointmentId + "/cancel")
+                    .then()
+                    .statusCode(400)
+                    .body("message", notNullValue());
+        }
     }
 
 }
