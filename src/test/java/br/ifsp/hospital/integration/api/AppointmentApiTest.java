@@ -698,6 +698,28 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(422)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 422 ao cancelar atendimento já cancelado")
+        void shouldReturn422WhenCancellingAlreadyCancelledAppointment() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .body(Map.of("reason", "Primeiro cancelamento"))
+                    .patch("/api/v1/appointments/" + appointmentId + "/cancel");
+
+            withAuth()
+                    .body(Map.of("reason", "Segundo cancelamento"))
+                    .patch("/api/v1/appointments/" + appointmentId + "/cancel")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
     }
 
 }
