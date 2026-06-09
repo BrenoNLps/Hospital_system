@@ -733,4 +733,31 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
 
     }
 
+    @Nested
+    @DisplayName("GET /api/v1/appointments/{id}/bill")
+    class CalculateBill {
+
+        @Test
+        @DisplayName("Deve calcular conta do atendimento com procedimentos e retornar 200")
+        void shouldCalculateBillAndReturn200() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .body(Map.of("procedureId", createProcedure(), "quantity", 1))
+                    .post("/api/v1/appointments/" + appointmentId + "/procedures");
+
+            withAuth()
+                    .get("/api/v1/appointments/" + appointmentId + "/bill")
+                    .then()
+                    .statusCode(200)
+                    .body("appointmentId", equalTo(appointmentId))
+                    .body("totalWithCoverage", notNullValue());
+        }
+    }
+
 }
