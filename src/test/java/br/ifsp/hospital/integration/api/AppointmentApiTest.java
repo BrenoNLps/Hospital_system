@@ -758,6 +758,23 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .body("appointmentId", equalTo(appointmentId))
                     .body("totalWithCoverage", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 422 ao calcular conta de atendimento sem procedimentos")
+        void shouldReturn422WhenCalculatingBillWithNoProcedures() {
+            String appointmentId = withAuth()
+                    .body(Map.of("patientId", createPatient(), "doctorId", createDoctor(), "scheduledAt", futureDateTime()))
+                    .post("/api/v1/appointments")
+                    .then()
+                    .statusCode(201)
+                    .extract().path("id");
+
+            withAuth()
+                    .get("/api/v1/appointments/" + appointmentId + "/bill")
+                    .then()
+                    .statusCode(422)
+                    .body("message", notNullValue());
+        }
     }
 
 }
