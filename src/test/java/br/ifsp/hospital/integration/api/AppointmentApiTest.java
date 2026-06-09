@@ -720,6 +720,17 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(422)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao cancelar atendimento sem token de autenticação")
+        void shouldReturn401WhenCancellingWithoutAuthToken() {
+            withoutAuth()
+                    .body(Map.of("reason", "Motivo qualquer"))
+                    .patch("/api/v1/appointments/00000000-0000-0000-0000-000000000000/cancel")
+                    .then()
+                    .statusCode(401);
+        }
+
     }
 
 }
