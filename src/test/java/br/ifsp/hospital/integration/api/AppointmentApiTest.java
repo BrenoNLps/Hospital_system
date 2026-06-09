@@ -775,6 +775,15 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(422)
                     .body("message", notNullValue());
         }
+
+        @Test
+        @DisplayName("Deve retornar 401 ao calcular conta sem token de autenticação")
+        void shouldReturn401WhenCalculatingBillWithoutAuthToken() {
+            withoutAuth()
+                    .get("/api/v1/appointments/00000000-0000-0000-0000-000000000000/bill")
+                    .then()
+                    .statusCode(401);
+        }
     }
 
 }
