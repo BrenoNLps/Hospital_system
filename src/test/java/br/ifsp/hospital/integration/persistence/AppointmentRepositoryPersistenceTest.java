@@ -109,4 +109,18 @@ class AppointmentRepositoryPersistenceTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("Deve retornar apenas os atendimentos com o status solicitado quando paciente tem múltiplos status")
+    void shouldReturnOnlyMatchingStatusWhenPatientHasMultipleAppointments() {
+        PatientEntity patient = savedPatient();
+        MedicalAppointmentEntity openAppointment = savedAppointment(patient, savedDoctor(), AppointmentStatus.OPEN);
+        savedAppointment(patient, savedDoctor(), AppointmentStatus.CLOSED);
+
+        List<MedicalAppointmentEntity> result = appointmentRepository
+                .findByPatientIdAndStatus(patient.getId(), AppointmentStatus.OPEN);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(openAppointment.getId());
+    }
+
 }
