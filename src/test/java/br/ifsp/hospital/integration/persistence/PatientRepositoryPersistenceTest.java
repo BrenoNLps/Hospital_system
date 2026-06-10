@@ -51,5 +51,12 @@ class PatientRepositoryPersistenceTest {
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
+    @Test
+    @DisplayName("Deve persistir dois pacientes com documentos diferentes sem erro")
+    void shouldSaveTwoPatientsWithDifferentDocuments() {
+        patientRepository.saveAndFlush(buildPatient("111.111.111-11"));
+        patientRepository.saveAndFlush(buildPatient("222.222.222-22"));
 
+        assertThat(patientRepository.findAll()).hasSize(2);
+    }
 }
