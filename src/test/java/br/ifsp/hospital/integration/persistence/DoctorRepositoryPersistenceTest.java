@@ -50,5 +50,12 @@ class DoctorRepositoryPersistenceTest {
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
+    @Test
+    @DisplayName("Deve persistir dois médicos com CRMs diferentes sem erro")
+    void shouldSaveTwoDoctorsWithDifferentLicenses() {
+        doctorRepository.saveAndFlush(buildDoctor("CRM-SP 111111"));
+        doctorRepository.saveAndFlush(buildDoctor("CRM-SP 222222"));
 
+        assertThat(doctorRepository.findAll()).hasSize(2);
+    }
 }
