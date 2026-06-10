@@ -88,5 +88,13 @@ class AppointmentRepositoryPersistenceTest {
         assertThat(result.get(0).getId()).isEqualTo(appointment.getId());
     }
 
+    @Test
+    @DisplayName("Deve retornar lista vazia quando patientId não existe")
+    void shouldReturnEmptyListWhenPatientIdDoesNotExist() {
+        List<MedicalAppointmentEntity> result = appointmentRepository
+                .findByPatientIdAndStatus(UUID.randomUUID(), AppointmentStatus.OPEN);
+
+        assertThat(result).isEmpty();
+    }
 
 }
