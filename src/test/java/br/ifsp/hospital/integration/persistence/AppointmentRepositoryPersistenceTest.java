@@ -97,4 +97,16 @@ class AppointmentRepositoryPersistenceTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("Deve retornar lista vazia quando patientId é correto mas status é diferente")
+    void shouldReturnEmptyListWhenStatusDoesNotMatch() {
+        PatientEntity patient = savedPatient();
+        savedAppointment(patient, savedDoctor(), AppointmentStatus.OPEN);
+
+        List<MedicalAppointmentEntity> result = appointmentRepository
+                .findByPatientIdAndStatus(patient.getId(), AppointmentStatus.CLOSED);
+
+        assertThat(result).isEmpty();
+    }
+
 }
