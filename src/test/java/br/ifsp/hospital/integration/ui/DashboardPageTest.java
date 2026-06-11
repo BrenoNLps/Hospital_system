@@ -220,5 +220,19 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(page.isAlertError()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve exibir erro ao cadastrar médico com CRM duplicado")
+        void shouldShowErrorWhenDoctorLicenseIsDuplicate() throws Exception {
+            String license = faker.numerify("CRM-SP ######");
+            createDoctorViaApi(faker.name().fullName(), license);
+
+            openDashboard();
+            DoctorsTabPage doctors = page.clickDoctorsTab();
+            doctors.fillForm(faker.name().fullName(), "Cardiologia", license);
+            doctors.submit();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
     }
 }
