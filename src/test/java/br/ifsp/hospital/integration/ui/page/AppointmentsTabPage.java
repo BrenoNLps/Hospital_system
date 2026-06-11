@@ -105,4 +105,15 @@ public class AppointmentsTabPage {
         return new Select(driver.findElement(APPT_DOCTOR)).getOptions().stream()
                 .anyMatch(o -> o.getText().equals(name));
     }
+
+    public boolean isProcedureSelectorVisible() {
+        List<WebElement> elements = driver.findElements(By.id("appt-procedure"));
+        return !elements.isEmpty() && elements.get(0).isDisplayed();
+    }
+
+    public boolean isProcedureColumnVisible() {
+        List<WebElement> headers = driver.findElements(
+                By.cssSelector("#appointments table th"));
+        return headers.stream().anyMatch(h -> h.getText().equalsIgnoreCase("Procedimento"));
+    }
 }

@@ -655,5 +655,16 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(appointments.listContains(patientName)).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve exibir seletor de procedimentos no formulário de atendimento")
+        void shouldShowProcedureSelectorInAppointmentForm() {
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+
+            assertThat(appointments.isProcedureSelectorVisible()).isTrue();
+        }
+
+
     }
 }
