@@ -113,5 +113,26 @@ class IndexPageTest {
         assertThat(page.getActiveTabText()).isEqualTo("Login");
     }
 
+    @Nested
+    @DisplayName("Login")
+    class Login {
+
+        @Test
+        @DisplayName("Deve redirecionar para dashboard com credenciais válidas")
+        void shouldRedirectToDashboardWithValidCredentials() throws Exception {
+            String email = faker.internet().uuid() + "@test.com";
+            String password = "Test@1234";
+            registerUserViaApi(faker.name().firstName(), faker.name().lastName(), email, password);
+
+            page.open(indexUrl());
+            page.fillLoginForm(email, password);
+            page.submitLogin();
+
+            page.waitForDashboardRedirect();
+            assertThat(page.getCurrentUrl()).contains("dashboard.html");
+        }
+
+    }
+
 
 }
