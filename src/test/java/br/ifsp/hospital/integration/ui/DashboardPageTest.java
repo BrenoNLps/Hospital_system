@@ -458,6 +458,22 @@ class DashboardPageTest extends BaseUiTest {
         }
 
         @Test
+        @DisplayName("Deve manter status OPEN ao cancelar atendimento sem informar motivo no prompt")
+        void shouldKeepStatusOpenWhenCancelPromptIsDismissed() throws Exception {
+            String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            createAppointmentViaApi(patientId, doctorId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+            appointments.clickCancelInRowAndDismiss(0);
+
+            assertThat(page.isAlertDisplayed()).isFalse();
+            assertThat(appointments.listContains("OPEN")).isTrue();
+        }
+
+        @Test
         @DisplayName("Deve exibir erro ao tentar faturar atendimento com status OPEN")
         void shouldShowErrorWhenBillingOpenAppointment() throws Exception {
             String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
