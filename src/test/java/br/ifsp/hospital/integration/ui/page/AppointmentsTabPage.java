@@ -2,6 +2,7 @@ package br.ifsp.hospital.integration.ui.page;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -46,7 +47,8 @@ public class AppointmentsTabPage {
     }
 
     public void setDate(String dateTime) {
-        driver.findElement(APPT_DATE).sendKeys(dateTime);
+        WebElement input = driver.findElement(APPT_DATE);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1]", input, dateTime);
     }
 
     public void submit() {

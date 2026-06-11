@@ -1,6 +1,7 @@
 package br.ifsp.hospital.integration.ui.page;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -25,6 +26,10 @@ public class DashboardPage {
 
     public void open(String url) {
         driver.get(url);
+    }
+
+    public void injectToken(String token) {
+        ((JavascriptExecutor) driver).executeScript("localStorage.setItem('token', '" + token + "')");
     }
 
     public String getCurrentUrl() {
