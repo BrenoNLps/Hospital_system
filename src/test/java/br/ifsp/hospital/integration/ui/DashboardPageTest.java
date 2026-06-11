@@ -89,7 +89,7 @@ class DashboardPageTest extends BaseUiTest {
                         .POST(HttpRequest.BodyPublishers.ofString(body))
                         .build(),
                 HttpResponse.BodyHandlers.ofString()).body();
-        return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+        return response.replaceAll("(?s).*?\"id\":\"([^\"]+)\".*", "$1");
     }
 
     private void closeAppointmentViaApi(String appointmentId) throws Exception {
@@ -472,7 +472,7 @@ class DashboardPageTest extends BaseUiTest {
         }
 
         @Test
-        @DisplayName("Deve cancelar atendimento e atualizar status para CANCELLED")
+        @DisplayName("Deve cancelar atendimento e atualizar status para CANCELED")
         void shouldCancelAppointment() throws Exception {
             String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
             String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
@@ -484,8 +484,8 @@ class DashboardPageTest extends BaseUiTest {
             appointments.clickCancelInRow(0, "Paciente não compareceu");
 
             assertThat(page.isAlertSuccess()).isTrue();
-            wait.until(d -> appointments.listContains("CANCELLED"));
-            assertThat(appointments.listContains("CANCELLED")).isTrue();
+            wait.until(d -> appointments.listContains("CANCELED"));
+            assertThat(appointments.listContains("CANCELED")).isTrue();
         }
 
         @Test
