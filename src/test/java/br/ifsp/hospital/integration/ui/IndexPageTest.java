@@ -88,7 +88,7 @@ class IndexPageTest {
                 HttpResponse.BodyHandlers.ofString()).body();
         return response.replaceAll(".*\"token\":\"([^\"]+)\".*", "$1");
     }
-    
+
     @Test
     @DisplayName("Deve redirecionar para dashboard quando usuário já está autenticado")
     void shouldRedirectToDashboardWhenAlreadyAuthenticated() throws Exception {
@@ -102,6 +102,15 @@ class IndexPageTest {
 
         page.waitForDashboardRedirect();
         assertThat(page.getCurrentUrl()).contains("dashboard.html");
+    }
+
+    @Test
+    @DisplayName("Deve exibir aba Login ativa por padrão quando não há token")
+    void shouldShowLoginTabActiveByDefault() {
+        page.open(indexUrl());
+
+        assertThat(page.isLoginTabActive()).isTrue();
+        assertThat(page.getActiveTabText()).isEqualTo("Login");
     }
 
 
