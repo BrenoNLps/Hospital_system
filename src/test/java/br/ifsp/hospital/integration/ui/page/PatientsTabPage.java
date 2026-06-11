@@ -60,4 +60,8 @@ public class PatientsTabPage {
     public void waitForRowCount(int count) {
         wait.until(ExpectedConditions.numberOfElementsToBe(TABLE_ROWS, count));
     }
+
+    public String getNameInRow(int rowIndex) {
+        return getRows().get(rowIndex).findElement(By.xpath(".//td[2]")).getText();
+    }
 }

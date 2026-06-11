@@ -219,6 +219,19 @@ class DashboardPageTest extends BaseUiTest {
         }
 
         @Test
+        @DisplayName("Deve exibir nome com HTML como texto literal na lista de pacientes")
+        void shouldRenderPatientNameAsLiteralTextNotHtml() throws Exception {
+            String xssName = "<b>XSS</b>";
+            createPatientViaApi(xssName, faker.numerify("###.###.###-##"));
+
+            openDashboard();
+            PatientsTabPage patients = page.getPatientsTab();
+            patients.waitForRowCount(1);
+
+            assertThat(patients.getNameInRow(0)).isEqualTo(xssName);
+        }
+
+        @Test
         @DisplayName("Deve atualizar lista de pacientes ao clicar em Atualizar Lista")
         void shouldUpdatePatientListOnRefresh() throws Exception {
             openDashboard();
