@@ -313,5 +313,19 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(page.isAlertError()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve atualizar lista de procedimentos ao clicar em Atualizar Lista")
+        void shouldUpdateProcedureListOnRefresh() throws Exception {
+            openDashboard();
+            String name = faker.medical().medicineName();
+            createProcedureViaApi(name);
+
+            ProceduresTabPage procedures = page.clickProceduresTab();
+            procedures.clickRefresh();
+            procedures.waitForRowCount(1);
+
+            assertThat(procedures.listContains(name)).isTrue();
+        }
     }
 }
