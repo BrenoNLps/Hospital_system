@@ -472,5 +472,20 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(page.isAlertError()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve atualizar lista de atendimentos ao clicar em Atualizar Lista")
+        void shouldUpdateAppointmentListOnRefresh() throws Exception {
+            openDashboard();
+            String patientName = faker.name().fullName();
+            String patientId = createPatientViaApi(patientName, faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            createAppointmentViaApi(patientId, doctorId);
+
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.clickRefresh();
+            appointments.waitForRowCount(1);
+
+            assertThat(appointments.listContains(patientName)).isTrue();
+        }
     }
 }
