@@ -76,6 +76,16 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(appointments.isActive()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve fazer logout e redirecionar para index ao clicar em Sair")
+        void shouldLogoutAndRedirectToIndex() {
+            openDashboard();
+            page.clickLogout();
+
+            page.waitForRedirectToIndex();
+            assertThat(page.getCurrentUrl()).contains("index.html");
+        }
+
     }
 
 }
