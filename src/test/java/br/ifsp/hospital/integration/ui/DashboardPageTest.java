@@ -49,6 +49,18 @@ class DashboardPageTest extends BaseUiTest {
         return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
     }
 
+    private String createDoctorViaApi(String name, String license) throws Exception {
+        String body = "{\"name\":\"" + name + "\",\"specialty\":\"Cardiologia\",\"license\":\"" + license + "\"}";
+        String response = HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/v1/doctors"))
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString()).body();
+        return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+    }
 
     @Nested
     @DisplayName("Navegação")
@@ -169,4 +181,22 @@ class DashboardPageTest extends BaseUiTest {
         }
     }
 
+    @Nested
+    @DisplayName("Médicos")
+    class Doctors {
+
+        @Test
+        @DisplayName("Deve carregar lista de médicos automaticamente ao abrir o dashboard")
+        void shouldLoadDoctorsAutomaticallyOnDashboardOpen() throws Exception {
+            String name = faker.name().fullName();
+            createDoctorViaApi(name, faker.numerify("CRM-SP ######"));
+
+            openDashboard();
+            DoctorsTabPage doctors = page.clickDoctorsTab();
+            doctors.waitForRowCount(1);
+
+            assertThat(doctors.listContains(name)).isTrue();
+        }
+
+    }
 }
