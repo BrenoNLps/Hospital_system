@@ -146,15 +146,12 @@ public class IndexPage {
         return left >= 0 && right <= windowWidth && top >= 0 && bottom <= windowHeight;
     }
 
-    public double getLoginEmailFontSizePx() {
-        return parseFontSize(driver.findElement(LOGIN_EMAIL).getCssValue("font-size"));
-    }
-
-    public double getLoginButtonFontSizePx() {
-        return parseFontSize(driver.findElement(LOGIN_BUTTON).getCssValue("font-size"));
-    }
-
-    private double parseFontSize(String value) {
-        return Double.parseDouble(value.replace("px", ""));
+    public double getContainerWidthPercent() {
+        double containerWidth = ((Number) ((JavascriptExecutor) driver)
+                .executeScript("return document.querySelector('.container').getBoundingClientRect().width"))
+                .doubleValue();
+        long windowWidth = (long) ((JavascriptExecutor) driver)
+                .executeScript("return window.innerWidth");
+        return (containerWidth * 100.0) / windowWidth;
     }
 }

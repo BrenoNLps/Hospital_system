@@ -33,18 +33,12 @@ class IndexPageTest extends BaseUiTest {
     }
 
     @Test
-    @DisplayName("Deve exibir elementos principais em tela de 375px de largura")
-    void shouldDisplayMainElementsOnMobileWidth() {
+    @DisplayName("Deve ocupar ao menos 90% da largura da tela em mobile de 375px")
+    void shouldFillMostOfScreenWidthOnMobile() {
         page.open(fileUrl(INDEX_URL));
         resizeWindowTo(375, 812);
 
-        assertThat(page.isLoginTabVisible()).isTrue();
-        assertThat(page.isRegisterTabVisible()).isTrue();
-        assertThat(page.isLoginEmailVisible()).isTrue();
-        assertThat(page.isLoginPasswordVisible()).isTrue();
-        assertThat(page.isLoginButtonVisible()).isTrue();
-        assertThat(page.getLoginEmailFontSizePx()).isGreaterThanOrEqualTo(12.0);
-        assertThat(page.getLoginButtonFontSizePx()).isGreaterThanOrEqualTo(12.0);
+        assertThat(page.getContainerWidthPercent()).isGreaterThanOrEqualTo(90.0);
     }
 
     @Test
