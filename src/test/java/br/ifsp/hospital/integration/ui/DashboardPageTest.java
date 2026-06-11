@@ -62,6 +62,19 @@ class DashboardPageTest extends BaseUiTest {
         return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
     }
 
+    private String createProcedureViaApi(String name) throws Exception {
+        String body = "{\"name\":\"" + name + "\",\"cost\":100.00}";
+        String response = HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/v1/procedures"))
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString()).body();
+        return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+    }
+
     @Nested
     @DisplayName("Navegação")
     class navigation{
@@ -247,6 +260,24 @@ class DashboardPageTest extends BaseUiTest {
             doctors.waitForRowCount(1);
 
             assertThat(doctors.listContains(name)).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("Procedimentos")
+    class Procedures {
+
+        @Test
+        @DisplayName("Deve carregar lista de procedimentos automaticamente ao abrir o dashboard")
+        void shouldLoadProceduresAutomaticallyOnDashboardOpen() throws Exception {
+            String name = faker.medical().medicineName();
+            createProcedureViaApi(name);
+
+            openDashboard();
+            ProceduresTabPage procedures = page.clickProceduresTab();
+            procedures.waitForRowCount(1);
+
+            assertThat(procedures.listContains(name)).isTrue();
         }
     }
 }
