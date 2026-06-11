@@ -385,5 +385,14 @@ class DashboardPageTest extends BaseUiTest {
             appointments.waitForRowCount(1);
             assertThat(appointments.listContains(patientName)).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve exibir erro ao criar atendimento sem preencher os campos")
+        void shouldShowErrorWhenAppointmentFieldsAreEmpty() {
+            openDashboard();
+            page.clickAppointmentsTab().submit();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
     }
 }
