@@ -75,6 +75,23 @@ class DashboardPageTest extends BaseUiTest {
         return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
     }
 
+    private String createAppointmentViaApi(String patientId, String doctorId) throws Exception {
+        String scheduledAt = LocalDateTime.now().plusDays(1)
+                .withHour(10).withMinute(0).withSecond(0).withNano(0)
+                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String body = "{\"patientId\":\"" + patientId + "\",\"doctorId\":\"" + doctorId +
+                "\",\"scheduledAt\":\"" + scheduledAt + "\"}";
+        String response = HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/v1/appointments"))
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString()).body();
+        return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+    }
+
     @Nested
     @DisplayName("Navegação")
     class navigation{
@@ -326,6 +343,26 @@ class DashboardPageTest extends BaseUiTest {
             procedures.waitForRowCount(1);
 
             assertThat(procedures.listContains(name)).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("Atendimentos")
+    class Appointments {
+
+        @Test
+        @DisplayName("Deve carregar lista de atendimentos automaticamente ao abrir o dashboard")
+        void shouldLoadAppointmentsAutomaticallyOnDashboardOpen() throws Exception {
+            String patientName = faker.name().fullName();
+            String patientId = createPatientViaApi(patientName, faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            createAppointmentViaApi(patientId, doctorId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+
+            assertThat(appointments.listContains(patientName)).isTrue();
         }
     }
 }
