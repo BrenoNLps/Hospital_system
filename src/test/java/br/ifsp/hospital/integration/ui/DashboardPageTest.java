@@ -30,6 +30,11 @@ class DashboardPageTest extends BaseUiTest {
         page = new DashboardPage(driver, wait);
     }
 
+    private void openDashboard() {
+        page.open(fileUrl(INDEX_URL));
+        page.injectToken(token);
+        page.open(fileUrl(DASHBOARD_URL));
+    }
 
 
     @Nested
@@ -44,7 +49,14 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(page.getCurrentUrl()).contains("index.html");
         }
 
+        @Test
+        @DisplayName("Deve exibir aba Médicos ao clicar em Médicos")
+        void shouldShowDoctorsTabWhenClicked() {
+            openDashboard();
 
+            DoctorsTabPage doctors = page.clickDoctorsTab();
+            assertThat(doctors.isActive()).isTrue();
+        }
     }
 
 }
