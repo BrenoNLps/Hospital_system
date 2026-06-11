@@ -211,5 +211,14 @@ class DashboardPageTest extends BaseUiTest {
             doctors.waitForRowCount(1);
             assertThat(doctors.listContains(name)).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve exibir erro ao cadastrar médico com campos vazios")
+        void shouldShowErrorWhenDoctorFieldsAreEmpty() {
+            openDashboard();
+            page.clickDoctorsTab().submit();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
     }
 }
