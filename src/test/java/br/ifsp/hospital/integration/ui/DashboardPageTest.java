@@ -36,6 +36,19 @@ class DashboardPageTest extends BaseUiTest {
         page.open(fileUrl(DASHBOARD_URL));
     }
 
+    private String createPatientViaApi(String name, String document) throws Exception {
+        String body = "{\"name\":\"" + name + "\",\"document\":\"" + document + "\",\"insuranceType\":\"BASIC\"}";
+        String response = HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/v1/patients"))
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString()).body();
+        return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
+    }
+
 
     @Nested
     @DisplayName("Navegação")
@@ -85,7 +98,24 @@ class DashboardPageTest extends BaseUiTest {
             page.waitForRedirectToIndex();
             assertThat(page.getCurrentUrl()).contains("index.html");
         }
-
     }
 
-}
+    @Nested
+    @DisplayName("Pacientes")
+    class Patients {
+
+        @Test
+        @DisplayName("Deve carregar lista de pacientes automaticamente ao abrir o dashboard")
+        void shouldLoadPatientsAutomaticallyOnDashboardOpen() throws Exception {
+            String name = faker.name().fullName();
+            createPatientViaApi(name, faker.numerify("###.###.###-##"));
+
+            openDashboard();
+            PatientsTabPage patients = page.getPatientsTab();
+            patients.waitForRowCount(1);
+
+            assertThat(patients.listContains(name)).isTrue();
+        }
+    }
+
+    }
