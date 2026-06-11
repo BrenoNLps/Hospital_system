@@ -597,8 +597,8 @@ class DashboardPageTest extends BaseUiTest {
         }
 
         @Test
-        @DisplayName("Deve exibir paciente e médico criados via UI nos selects de atendimento")
-        void shouldShowUiCreatedPatientAndDoctorInAppointmentSelects() {
+        @DisplayName("Deve atualizar selects de atendimento ao cadastrar paciente e médico sem recarregar a página")
+        void shouldUpdateAppointmentSelectsAfterRegisteringPatientAndDoctorWithoutPageReload() {
             openDashboard();
             String patientName = faker.name().fullName();
             String doctorName = faker.name().fullName();
