@@ -66,6 +66,16 @@ class DashboardPageTest extends BaseUiTest {
             ProceduresTabPage procedures = page.clickProceduresTab();
             assertThat(procedures.isActive()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve exibir aba Atendimentos ao clicar em Atendimentos")
+        void shouldShowAppointmentsTabWhenClicked() {
+            openDashboard();
+
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            assertThat(appointments.isActive()).isTrue();
+        }
+
     }
 
 }
