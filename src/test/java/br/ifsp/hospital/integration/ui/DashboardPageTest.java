@@ -140,6 +140,19 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(page.isAlertError()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve exibir erro ao cadastrar paciente com documento duplicado")
+        void shouldShowErrorWhenPatientDocumentIsDuplicate() throws Exception {
+            String document = faker.numerify("###.###.###-##");
+            createPatientViaApi(faker.name().fullName(), document);
+
+            openDashboard();
+            PatientsTabPage patients = page.getPatientsTab();
+            patients.fillForm(faker.name().fullName(), document, "NONE");
+            patients.submit();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
     }
 
-    }
+}
