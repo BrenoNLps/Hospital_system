@@ -116,6 +116,20 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(patients.listContains(name)).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve cadastrar paciente com dados válidos")
+        void shouldRegisterPatientWithValidData() {
+            openDashboard();
+            String name = faker.name().fullName();
+            PatientsTabPage patients = page.getPatientsTab();
+            patients.fillForm(name, faker.numerify("###.###.###-##"), "BASIC");
+            patients.submit();
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            patients.waitForRowCount(1);
+            assertThat(patients.listContains(name)).isTrue();
+        }
     }
 
     }
