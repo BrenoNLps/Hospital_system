@@ -198,5 +198,18 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(doctors.listContains(name)).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve cadastrar médico com dados válidos")
+        void shouldRegisterDoctorWithValidData() {
+            openDashboard();
+            String name = faker.name().fullName();
+            DoctorsTabPage doctors = page.clickDoctorsTab();
+            doctors.fillForm(name, faker.medical().medicineName(), faker.numerify("CRM-SP ######"));
+            doctors.submit();
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            doctors.waitForRowCount(1);
+            assertThat(doctors.listContains(name)).isTrue();
+        }
     }
 }
