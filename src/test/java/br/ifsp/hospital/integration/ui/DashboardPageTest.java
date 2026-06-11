@@ -440,5 +440,22 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(appointments.listContains("BILLED")).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve cancelar atendimento e atualizar status para CANCELLED")
+        void shouldCancelAppointment() throws Exception {
+            String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            createAppointmentViaApi(patientId, doctorId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+            appointments.clickCancelInRow(0, "Paciente não compareceu");
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            wait.until(d -> appointments.listContains("CANCELLED"));
+            assertThat(appointments.listContains("CANCELLED")).isTrue();
+        }
+
     }
 }
