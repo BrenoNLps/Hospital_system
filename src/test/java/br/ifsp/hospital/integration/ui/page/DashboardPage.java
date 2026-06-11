@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Map;
+
 public class DashboardPage {
 
     private final WebDriver driver;
@@ -88,5 +90,50 @@ public class DashboardPage {
 
     public PatientsTabPage getPatientsTab() {
         return new PatientsTabPage(driver, wait);
+    }
+
+    public boolean isPatientsTabVisible() {
+        return isWithinViewport(driver.findElement(TAB_PATIENTS));
+    }
+
+    public boolean isDoctorsTabVisible() {
+        return isWithinViewport(driver.findElement(TAB_DOCTORS));
+    }
+
+    public boolean isProceduresTabVisible() {
+        return isWithinViewport(driver.findElement(TAB_PROCEDURES));
+    }
+
+    public boolean isAppointmentsTabVisible() {
+        return isWithinViewport(driver.findElement(TAB_APPOINTMENTS));
+    }
+
+    public boolean isLogoutButtonVisible() {
+        return isWithinViewport(driver.findElement(LOGOUT_BUTTON));
+    }
+
+    private boolean isWithinViewport(WebElement element) {
+        Map<String, Object> rect = (Map<String, Object>) ((JavascriptExecutor) driver).executeScript(
+                "var r = arguments[0].getBoundingClientRect();" +
+                "return {left: r.left, right: r.right, top: r.top, bottom: r.bottom};", element);
+        long windowWidth = (long) ((JavascriptExecutor) driver).executeScript("return window.innerWidth;");
+        long windowHeight = (long) ((JavascriptExecutor) driver).executeScript("return window.innerHeight;");
+        double left = ((Number) rect.get("left")).doubleValue();
+        double right = ((Number) rect.get("right")).doubleValue();
+        double top = ((Number) rect.get("top")).doubleValue();
+        double bottom = ((Number) rect.get("bottom")).doubleValue();
+        return left >= 0 && right <= windowWidth && top >= 0 && bottom <= windowHeight;
+    }
+
+    public double getPatientsTabFontSizePx() {
+        return parseFontSize(driver.findElement(TAB_PATIENTS).getCssValue("font-size"));
+    }
+
+    public double getLogoutButtonFontSizePx() {
+        return parseFontSize(driver.findElement(LOGOUT_BUTTON).getCssValue("font-size"));
+    }
+
+    private double parseFontSize(String value) {
+        return Double.parseDouble(value.replace("px", ""));
     }
 }
