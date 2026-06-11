@@ -168,6 +168,24 @@ class IndexPageTest {
             assertThat(page.isAlertDisplayed()).isFalse();
         }
 
+        @Test
+        @DisplayName("Deve registrar usuário com dados válidos e retornar para aba Login")
+        void shouldRegisterAndReturnToLoginTab() {
+            page.open(indexUrl());
+            page.clickRegisterTab();
+            page.fillRegisterForm(
+                    faker.name().firstName(),
+                    faker.name().lastName(),
+                    faker.internet().uuid() + "@test.com",
+                    "Test@1234"
+            );
+            page.submitRegister();
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            page.waitForLoginTabActive();
+            assertThat(page.isLoginTabActive()).isTrue();
+        }
+
     }
 
 }
