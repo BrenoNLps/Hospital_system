@@ -303,5 +303,15 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(page.isAlertError()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve exibir erro ao cadastrar procedimento com custo negativo")
+        void shouldShowErrorWhenProcedureCostIsNegative() {
+            openDashboard();
+            ProceduresTabPage procedures = page.clickProceduresTab();
+            procedures.fillForm(faker.medical().medicineName(), "-50.00");
+            procedures.submit();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
     }
 }
