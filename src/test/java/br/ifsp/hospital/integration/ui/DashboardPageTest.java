@@ -92,6 +92,16 @@ class DashboardPageTest extends BaseUiTest {
         return response.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
     }
 
+    private void closeAppointmentViaApi(String appointmentId) throws Exception {
+        HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/v1/appointments/" + appointmentId + "/close"))
+                        .header("Authorization", "Bearer " + token)
+                        .method("PATCH", HttpRequest.BodyPublishers.noBody())
+                        .build(),
+                HttpResponse.BodyHandlers.discarding());
+    }
+
     @Nested
     @DisplayName("Navegação")
     class navigation{
@@ -411,5 +421,24 @@ class DashboardPageTest extends BaseUiTest {
             wait.until(d -> appointments.listContains("CLOSED"));
             assertThat(appointments.listContains("CLOSED")).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve faturar atendimento CLOSED e atualizar status para BILLED")
+        void shouldBillClosedAppointment() throws Exception {
+            String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            String appointmentId = createAppointmentViaApi(patientId, doctorId);
+            closeAppointmentViaApi(appointmentId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+            appointments.clickBillInRow(0);
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            wait.until(d -> appointments.listContains("BILLED"));
+            assertThat(appointments.listContains("BILLED")).isTrue();
+        }
+
     }
 }
