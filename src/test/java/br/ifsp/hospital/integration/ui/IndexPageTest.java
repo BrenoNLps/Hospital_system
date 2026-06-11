@@ -116,6 +116,16 @@ class IndexPageTest {
     @Nested
     @DisplayName("Login")
     class Login {
+        
+        @Test
+        @DisplayName("Deve exibir formulário de login ao clicar na aba Login")
+        void shouldShowLoginFormWhenLoginTabClicked() {
+            page.open(indexUrl());
+            page.clickRegisterTab();
+            page.clickLoginTab();
+
+            assertThat(page.isLoginTabActive()).isTrue();
+        }
 
         @Test
         @DisplayName("Deve redirecionar para dashboard com credenciais válidas")

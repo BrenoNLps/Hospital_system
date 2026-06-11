@@ -15,6 +15,7 @@ public class IndexPage {
     private static final By LOGIN_FORM     = By.id("login");
     private static final By REGISTER_FORM  = By.id("register");
     private static final By ACTIVE_TAB     = By.cssSelector(".tab.active");
+    private static final By LOGIN_TAB      = By.xpath("//button[text()='Login']");
     private static final By REGISTER_TAB   = By.xpath("//button[text()='Registrar']");
     private static final By LOGIN_EMAIL    = By.id("login-email");
     private static final By LOGIN_PASSWORD = By.id("login-password");
@@ -46,6 +47,10 @@ public class IndexPage {
 
     public String getActiveTabText() {
         return driver.findElement(ACTIVE_TAB).getText();
+    }
+
+    public void clickLoginTab() {
+        driver.findElement(LOGIN_TAB).click();
     }
 
     public void clickRegisterTab() {
