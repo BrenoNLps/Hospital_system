@@ -89,4 +89,10 @@ public class AppointmentsTabPage {
         prompt.sendKeys(reason);
         prompt.accept();
     }
+
+    public void clickCancelInRowAndDismiss(int rowIndex) {
+        getRows().get(rowIndex).findElement(By.xpath(".//button[text()='Cancelar']")).click();
+        Alert prompt = wait.until(ExpectedConditions.alertIsPresent());
+        prompt.dismiss();
+    }
 }
