@@ -160,6 +160,22 @@ class IndexPageTest extends BaseUiTest {
 
             assertThat(page.isAlertError()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve bloquear envio com senha abaixo do mínimo de caracteres")
+        void shouldBlockSubmitWhenRegisterPasswordIsTooShort() {
+            page.open(fileUrl(INDEX_URL));
+            page.clickRegisterTab();
+            page.fillRegisterForm(
+                    faker.name().firstName(),
+                    faker.name().lastName(),
+                    faker.internet().uuid() + "@test.com",
+                    "12345"
+            );
+            page.submitRegister();
+
+            assertThat(page.isAlertDisplayed()).isFalse();
+        }
     }
-    
+
 }
