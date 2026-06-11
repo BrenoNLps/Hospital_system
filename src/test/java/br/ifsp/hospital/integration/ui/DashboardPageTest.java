@@ -234,5 +234,19 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(page.isAlertError()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve atualizar lista de médicos ao clicar em Atualizar Lista")
+        void shouldUpdateDoctorListOnRefresh() throws Exception {
+            openDashboard();
+            String name = faker.name().fullName();
+            createDoctorViaApi(name, faker.numerify("CRM-SP ######"));
+
+            DoctorsTabPage doctors = page.clickDoctorsTab();
+            doctors.clickRefresh();
+            doctors.waitForRowCount(1);
+
+            assertThat(doctors.listContains(name)).isTrue();
+        }
     }
 }
