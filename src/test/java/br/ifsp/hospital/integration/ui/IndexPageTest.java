@@ -132,6 +132,16 @@ class IndexPageTest {
             assertThat(page.getCurrentUrl()).contains("dashboard.html");
         }
 
+        @Test
+        @DisplayName("Deve exibir mensagem de erro com credenciais inválidas")
+        void shouldShowErrorWithInvalidCredentials() {
+            page.open(indexUrl());
+            page.fillLoginForm(faker.internet().emailAddress(), faker.internet().password());
+            page.submitLogin();
+
+            assertThat(page.isAlertError()).isTrue();
+            assertThat(page.getAlertText()).isNotBlank();
+        }
     }
 
 
