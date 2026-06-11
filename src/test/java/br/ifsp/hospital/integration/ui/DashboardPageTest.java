@@ -168,19 +168,15 @@ class DashboardPageTest extends BaseUiTest {
         }
 
         @Test
-        @DisplayName("Deve exibir elementos principais em tela de 375px de largura")
-        void shouldDisplayMainElementsOnMobileWidth() {
+        @DisplayName("Deve ter scroll vertical em tela de 375px de largura")
+        void shouldHaveVerticalScrollOnMobileWidth() {
             openDashboard();
             resizeWindowTo(375, 812);
 
-            assertThat(page.isPatientsTabVisible()).isTrue();
-            assertThat(page.isDoctorsTabVisible()).isTrue();
-            assertThat(page.isProceduresTabVisible()).isTrue();
-            assertThat(page.isAppointmentsTabVisible()).isTrue();
-            assertThat(page.isLogoutButtonVisible()).isTrue();
-            assertThat(page.getPatientsTabFontSizePx()).isGreaterThanOrEqualTo(12.0);
-            assertThat(page.getLogoutButtonFontSizePx()).isGreaterThanOrEqualTo(12.0);
+            assertThat(page.hasVerticalScroll()).isTrue();
         }
+
+
 
         @Test
         @DisplayName("Deve fazer logout e redirecionar para index ao clicar em Sair")

@@ -125,15 +125,20 @@ public class DashboardPage {
         return left >= 0 && right <= windowWidth && top >= 0 && bottom <= windowHeight;
     }
 
-    public double getPatientsTabFontSizePx() {
-        return parseFontSize(driver.findElement(TAB_PATIENTS).getCssValue("font-size"));
+    public boolean hasVerticalScroll() {
+        long scrollHeight = (long) ((JavascriptExecutor) driver)
+                .executeScript("return document.documentElement.scrollHeight");
+        long clientHeight = (long) ((JavascriptExecutor) driver)
+                .executeScript("return document.documentElement.clientHeight");
+        return scrollHeight > clientHeight;
     }
 
-    public double getLogoutButtonFontSizePx() {
-        return parseFontSize(driver.findElement(LOGOUT_BUTTON).getCssValue("font-size"));
-    }
-
-    private double parseFontSize(String value) {
-        return Double.parseDouble(value.replace("px", ""));
+    public double getContainerHeightPercent() {
+        double containerHeight = ((Number) ((JavascriptExecutor) driver)
+                .executeScript("return document.querySelector('.dashboard-container').getBoundingClientRect().height"))
+                .doubleValue();
+        long windowHeight = (long) ((JavascriptExecutor) driver)
+                .executeScript("return window.innerHeight");
+        return (containerHeight * 100.0) / windowHeight;
     }
 }
