@@ -16,7 +16,7 @@ class ProcedureApiTest extends BaseApiIntegrationTest {
     private Map<String, Object> buildProcedure() {
         return Map.of(
                 "name", faker.medical().medicineName(),
-                "cost", 150.00
+                "cost", 150.25
         );
     }
 
