@@ -519,6 +519,21 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(page.isAlertError()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve exibir erro ao tentar cancelar atendimento com status CLOSED")
+        void shouldShowErrorWhenCancellingClosedAppointment() throws Exception {
+            String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            String appointmentId = createAppointmentViaApi(patientId, doctorId);
+            closeAppointmentViaApi(appointmentId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+            appointments.clickCancelInRow(0, "motivo");
+
+            assertThat(page.isAlertError()).isTrue();
+        }
 
         @Test
         @DisplayName("Deve exibir erro ao tentar cancelar atendimento já cancelado")
