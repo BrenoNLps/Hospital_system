@@ -5,8 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
@@ -411,7 +413,8 @@ class AppointmentApiTest extends BaseApiIntegrationTest {
                     .statusCode(201)
                     .extract().path("id");
 
-            String newScheduledAt = LocalDateTime.now().plusDays(3)
+            String newScheduledAt = LocalDateTime.now().plusWeeks(2)
+                    .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                     .withHour(14).withMinute(0).withSecond(0).withNano(0)
                     .format(FORMATTER);
 
