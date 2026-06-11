@@ -176,7 +176,14 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(page.hasVerticalScroll()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve ocupar ao menos 90% da altura da tela em mobile de 375px")
+        void shouldFillMostOfScreenHeightOnMobileWidth() {
+            openDashboard();
+            resizeWindowTo(375, 812);
 
+            assertThat(page.getContainerHeightPercent()).isGreaterThanOrEqualTo(90.0);
+        }
 
         @Test
         @DisplayName("Deve fazer logout e redirecionar para index ao clicar em Sair")
