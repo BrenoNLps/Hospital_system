@@ -279,5 +279,20 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(procedures.listContains(name)).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve cadastrar procedimento com dados válidos")
+        void shouldRegisterProcedureWithValidData() {
+            openDashboard();
+            String name = faker.medical().medicineName();
+            ProceduresTabPage procedures = page.clickProceduresTab();
+            procedures.fillForm(name, "250.00");
+            procedures.submit();
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            procedures.waitForRowCount(1);
+            assertThat(procedures.listContains(name)).isTrue();
+        }
+
     }
 }
