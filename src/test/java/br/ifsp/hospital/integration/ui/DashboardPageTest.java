@@ -153,6 +153,20 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(page.isAlertError()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve atualizar lista de pacientes ao clicar em Atualizar Lista")
+        void shouldUpdatePatientListOnRefresh() throws Exception {
+            openDashboard();
+            String name = faker.name().fullName();
+            createPatientViaApi(name, faker.numerify("###.###.###-##"));
+
+            PatientsTabPage patients = page.getPatientsTab();
+            patients.clickRefresh();
+            patients.waitForRowCount(1);
+
+            assertThat(patients.listContains(name)).isTrue();
+        }
     }
 
 }
