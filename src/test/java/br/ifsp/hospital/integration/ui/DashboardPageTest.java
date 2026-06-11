@@ -92,6 +92,20 @@ class DashboardPageTest extends BaseUiTest {
         return response.replaceAll("(?s).*?\"id\":\"([^\"]+)\".*", "$1");
     }
 
+    private String createAppointmentViaApiAt(String patientId, String doctorId, String scheduledAt) throws Exception {
+        String body = "{\"patientId\":\"" + patientId + "\",\"doctorId\":\"" + doctorId +
+                "\",\"scheduledAt\":\"" + scheduledAt + "\"}";
+        String response = HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/v1/appointments"))
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .POST(HttpRequest.BodyPublishers.ofString(body))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString()).body();
+        return response.replaceAll("(?s).*?\"id\":\"([^\"]+)\".*", "$1");
+    }
+
     private void closeAppointmentViaApi(String appointmentId) throws Exception {
         HttpClient.newHttpClient().send(
                 HttpRequest.newBuilder()
@@ -584,6 +598,28 @@ class DashboardPageTest extends BaseUiTest {
             AppointmentsTabPage appointments = page.clickAppointmentsTab();
             assertThat(appointments.patientSelectContains(patientName)).isTrue();
             assertThat(appointments.doctorSelectContains(doctorName)).isTrue();
+        }
+
+        @Test
+        @DisplayName("Deve exibir erro ao criar atendimento com médico já ocupado no mesmo horário")
+        void shouldShowErrorWhenDoctorAlreadyBookedAtSameTime() throws Exception {
+            String patientId1 = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String patientName2 = faker.name().fullName();
+            createPatientViaApi(patientName2, faker.numerify("###.###.###-##"));
+            String doctorName = faker.name().fullName();
+            String doctorId = createDoctorViaApi(doctorName, faker.numerify("CRM-SP ######"));
+
+            createAppointmentViaApiAt(patientId1, doctorId, "2099-06-15T10:00:00");
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForSelectsPopulated();
+            appointments.selectPatient(patientName2);
+            appointments.selectDoctor(doctorName);
+            appointments.setDate("2099-06-15T10:00");
+            appointments.submit();
+
+            assertThat(page.isAlertError()).isTrue();
         }
 
         @Test
