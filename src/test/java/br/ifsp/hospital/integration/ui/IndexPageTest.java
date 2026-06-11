@@ -186,6 +186,24 @@ class IndexPageTest {
             assertThat(page.isLoginTabActive()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve exibir mensagem de erro ao registrar com email já cadastrado")
+        void shouldShowErrorWhenEmailAlreadyExists() throws Exception {
+            String email = faker.internet().uuid() + "@test.com";
+            registerUserViaApi(faker.name().firstName(), faker.name().lastName(), email, "Test@1234");
+
+            page.open(indexUrl());
+            page.clickRegisterTab();
+            page.fillRegisterForm(
+                    faker.name().firstName(),
+                    faker.name().lastName(),
+                    email,
+                    "Test@1234"
+            );
+            page.submitRegister();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
     }
 
 }
