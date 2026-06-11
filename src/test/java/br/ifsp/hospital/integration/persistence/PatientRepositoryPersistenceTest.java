@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
@@ -48,7 +48,8 @@ class PatientRepositoryPersistenceTest {
         patientRepository.saveAndFlush(buildPatient(document));
 
         assertThatThrownBy(() -> patientRepository.saveAndFlush(buildPatient(document)))
-                .isInstanceOf(DataIntegrityViolationException.class);
+                .isInstanceOf(JpaSystemException.class)
+                .hasMessageContaining("UNIQUE constraint failed");
     }
 
     @Test
