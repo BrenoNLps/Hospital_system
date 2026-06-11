@@ -406,6 +406,25 @@ class DashboardPageTest extends BaseUiTest {
         }
 
         @Test
+        @DisplayName("Deve exibir erro ao criar atendimento com data no passado")
+        void shouldShowErrorWhenAppointmentDateIsInThePast() throws Exception {
+            String patientName = faker.name().fullName();
+            createPatientViaApi(patientName, faker.numerify("###.###.###-##"));
+            String doctorName = faker.name().fullName();
+            createDoctorViaApi(doctorName, faker.numerify("CRM-SP ######"));
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForSelectsPopulated();
+            appointments.selectPatient(patientName);
+            appointments.selectDoctor(doctorName);
+            appointments.setDate("2000-01-01T10:00");
+            appointments.submit();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
+
+        @Test
         @DisplayName("Deve fechar atendimento e atualizar status para CLOSED")
         void shouldCloseAppointment() throws Exception {
             String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
