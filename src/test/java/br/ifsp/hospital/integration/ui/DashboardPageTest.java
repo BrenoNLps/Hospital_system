@@ -457,5 +457,20 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(appointments.listContains("CANCELLED")).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve exibir erro ao tentar faturar atendimento com status OPEN")
+        void shouldShowErrorWhenBillingOpenAppointment() throws Exception {
+            String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            createAppointmentViaApi(patientId, doctorId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+            appointments.clickBillInRow(0);
+
+            assertThat(page.isAlertError()).isTrue();
+        }
+
     }
 }
