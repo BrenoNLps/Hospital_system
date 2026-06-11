@@ -665,6 +665,13 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(appointments.isProcedureSelectorVisible()).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve exibir coluna de procedimentos na lista de atendimentos")
+        void shouldShowProcedureColumnInAppointmentList() {
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
 
+            assertThat(appointments.isProcedureColumnVisible()).isTrue();
+        }
     }
 }
