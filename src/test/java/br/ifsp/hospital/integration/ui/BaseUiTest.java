@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import org.openqa.selenium.Dimension;
+
 import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -64,6 +66,10 @@ public abstract class BaseUiTest {
         doctorRepository.deleteAll();
         procedureRepository.deleteAll();
         userRepository.deleteAll();
+    }
+
+    protected void resizeWindowTo(int width, int height) {
+        driver.manage().window().setSize(new Dimension(width, height));
     }
 
     protected String fileUrl(String filename) {
