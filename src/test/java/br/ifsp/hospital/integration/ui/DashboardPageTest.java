@@ -294,5 +294,14 @@ class DashboardPageTest extends BaseUiTest {
             assertThat(procedures.listContains(name)).isTrue();
         }
 
+        @Test
+        @DisplayName("Deve exibir erro ao cadastrar procedimento com campos vazios")
+        void shouldShowErrorWhenProcedureFieldsAreEmpty() {
+            openDashboard();
+            page.clickProceduresTab().submit();
+
+            assertThat(page.isAlertError()).isTrue();
+        }
+
     }
 }
