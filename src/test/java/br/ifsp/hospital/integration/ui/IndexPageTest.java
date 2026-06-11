@@ -33,6 +33,21 @@ class IndexPageTest extends BaseUiTest {
     }
 
     @Test
+    @DisplayName("Deve exibir elementos principais em tela de 375px de largura")
+    void shouldDisplayMainElementsOnMobileWidth() {
+        page.open(fileUrl(INDEX_URL));
+        resizeWindowTo(375, 812);
+
+        assertThat(page.isLoginTabVisible()).isTrue();
+        assertThat(page.isRegisterTabVisible()).isTrue();
+        assertThat(page.isLoginEmailVisible()).isTrue();
+        assertThat(page.isLoginPasswordVisible()).isTrue();
+        assertThat(page.isLoginButtonVisible()).isTrue();
+        assertThat(page.getLoginEmailFontSizePx()).isGreaterThanOrEqualTo(12.0);
+        assertThat(page.getLoginButtonFontSizePx()).isGreaterThanOrEqualTo(12.0);
+    }
+
+    @Test
     @DisplayName("Deve exibir aba Login ativa por padrão quando não há token")
     void shouldShowLoginTabActiveByDefault() {
         page.open(fileUrl(INDEX_URL));

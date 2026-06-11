@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Map;
+
 public class IndexPage {
 
     private final WebDriver driver;
@@ -109,5 +111,50 @@ public class IndexPage {
 
     public void waitForLoginTabActive() {
         wait.until(ExpectedConditions.attributeContains(LOGIN_FORM, "class", "active"));
+    }
+
+    public boolean isLoginTabVisible() {
+        return isWithinViewport(driver.findElement(LOGIN_TAB));
+    }
+
+    public boolean isRegisterTabVisible() {
+        return isWithinViewport(driver.findElement(REGISTER_TAB));
+    }
+
+    public boolean isLoginEmailVisible() {
+        return isWithinViewport(driver.findElement(LOGIN_EMAIL));
+    }
+
+    public boolean isLoginPasswordVisible() {
+        return isWithinViewport(driver.findElement(LOGIN_PASSWORD));
+    }
+
+    public boolean isLoginButtonVisible() {
+        return isWithinViewport(driver.findElement(LOGIN_BUTTON));
+    }
+
+    private boolean isWithinViewport(WebElement element) {
+        Map<String, Object> rect = (Map<String, Object>) ((JavascriptExecutor) driver).executeScript(
+                "var r = arguments[0].getBoundingClientRect();" +
+                "return {left: r.left, right: r.right, top: r.top, bottom: r.bottom};", element);
+        long windowWidth = (long) ((JavascriptExecutor) driver).executeScript("return window.innerWidth;");
+        long windowHeight = (long) ((JavascriptExecutor) driver).executeScript("return window.innerHeight;");
+        double left = ((Number) rect.get("left")).doubleValue();
+        double right = ((Number) rect.get("right")).doubleValue();
+        double top = ((Number) rect.get("top")).doubleValue();
+        double bottom = ((Number) rect.get("bottom")).doubleValue();
+        return left >= 0 && right <= windowWidth && top >= 0 && bottom <= windowHeight;
+    }
+
+    public double getLoginEmailFontSizePx() {
+        return parseFontSize(driver.findElement(LOGIN_EMAIL).getCssValue("font-size"));
+    }
+
+    public double getLoginButtonFontSizePx() {
+        return parseFontSize(driver.findElement(LOGIN_BUTTON).getCssValue("font-size"));
+    }
+
+    private double parseFontSize(String value) {
+        return Double.parseDouble(value.replace("px", ""));
     }
 }
