@@ -157,6 +157,17 @@ class IndexPageTest {
 
             assertThat(page.isRegisterFormActive()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve bloquear envio quando campos obrigatórios estão vazios")
+        void shouldBlockSubmitWhenRequiredFieldsAreEmpty() {
+            page.open(indexUrl());
+            page.clickRegisterTab();
+            page.submitRegister();
+
+            assertThat(page.isAlertDisplayed()).isFalse();
+        }
+
     }
 
 }
