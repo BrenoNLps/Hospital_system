@@ -65,6 +65,16 @@ class IndexPageTest extends BaseUiTest {
         }
 
         @Test
+        @DisplayName("Deve bloquear envio com email em formato inválido")
+        void shouldBlockSubmitWhenLoginEmailIsInvalid() {
+            page.open(fileUrl(INDEX_URL));
+            page.fillLoginForm("emailinvalido", "Test@1234");
+            page.submitLogin();
+
+            assertThat(page.isAlertDisplayed()).isFalse();
+        }
+
+        @Test
         @DisplayName("Deve redirecionar para dashboard com credenciais válidas")
         void shouldRedirectToDashboardWithValidCredentials() throws Exception {
             String email = faker.internet().uuid() + "@test.com";
