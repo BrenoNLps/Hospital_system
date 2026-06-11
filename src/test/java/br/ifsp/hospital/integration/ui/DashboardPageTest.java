@@ -102,6 +102,18 @@ class DashboardPageTest extends BaseUiTest {
                 HttpResponse.BodyHandlers.discarding());
     }
 
+    private void cancelAppointmentViaApi(String appointmentId) throws Exception {
+        String body = "{\"reason\":\"Cancelado via API\"}";
+        HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/v1/appointments/" + appointmentId + "/cancel"))
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + token)
+                        .method("PATCH", HttpRequest.BodyPublishers.ofString(body))
+                        .build(),
+                HttpResponse.BodyHandlers.discarding());
+    }
+
     @Nested
     @DisplayName("Navegação")
     class navigation{
@@ -503,6 +515,23 @@ class DashboardPageTest extends BaseUiTest {
             AppointmentsTabPage appointments = page.clickAppointmentsTab();
             appointments.waitForRowCount(1);
             appointments.clickBillInRow(0);
+
+            assertThat(page.isAlertError()).isTrue();
+        }
+
+
+        @Test
+        @DisplayName("Deve exibir erro ao tentar cancelar atendimento já cancelado")
+        void shouldShowErrorWhenCancellingCancelledAppointment() throws Exception {
+            String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            String appointmentId = createAppointmentViaApi(patientId, doctorId);
+            cancelAppointmentViaApi(appointmentId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+            appointments.clickCancelInRow(0, "motivo");
 
             assertThat(page.isAlertError()).isTrue();
         }
