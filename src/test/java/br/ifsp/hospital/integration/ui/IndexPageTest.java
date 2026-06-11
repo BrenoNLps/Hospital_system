@@ -116,7 +116,7 @@ class IndexPageTest {
     @Nested
     @DisplayName("Login")
     class Login {
-        
+
         @Test
         @DisplayName("Deve exibir formulário de login ao clicar na aba Login")
         void shouldShowLoginFormWhenLoginTabClicked() {
@@ -125,6 +125,15 @@ class IndexPageTest {
             page.clickLoginTab();
 
             assertThat(page.isLoginTabActive()).isTrue();
+        }
+
+        @Test
+        @DisplayName("Deve bloquear envio quando campos obrigatórios estão vazios")
+        void shouldBlockSubmitWhenLoginFieldsAreEmpty() {
+            page.open(indexUrl());
+            page.submitLogin();
+
+            assertThat(page.isAlertDisplayed()).isFalse();
         }
 
         @Test
