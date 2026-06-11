@@ -145,4 +145,18 @@ class IndexPageTest {
     }
 
 
+    @Nested
+    @DisplayName("Registro")
+    class Register {
+
+        @Test
+        @DisplayName("Deve exibir formulário de registro ao clicar na aba Registrar")
+        void shouldShowRegisterFormWhenTabClicked() {
+            page.open(indexUrl());
+            page.clickRegisterTab();
+
+            assertThat(page.isRegisterFormActive()).isTrue();
+        }
+    }
+
 }
