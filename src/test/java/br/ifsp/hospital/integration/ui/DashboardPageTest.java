@@ -364,5 +364,26 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(appointments.listContains(patientName)).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve criar atendimento com dados válidos")
+        void shouldCreateAppointmentWithValidData() throws Exception {
+            String patientName = faker.name().fullName();
+            createPatientViaApi(patientName, faker.numerify("###.###.###-##"));
+            String doctorName = faker.name().fullName();
+            createDoctorViaApi(doctorName, faker.numerify("CRM-SP ######"));
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForSelectsPopulated();
+            appointments.selectPatient(patientName);
+            appointments.selectDoctor(doctorName);
+            appointments.setDate("2099-12-31T10:00");
+            appointments.submit();
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            appointments.waitForRowCount(1);
+            assertThat(appointments.listContains(patientName)).isTrue();
+        }
     }
 }
