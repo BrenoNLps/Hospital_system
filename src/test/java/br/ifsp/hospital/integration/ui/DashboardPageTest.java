@@ -394,5 +394,22 @@ class DashboardPageTest extends BaseUiTest {
 
             assertThat(page.isAlertError()).isTrue();
         }
+
+        @Test
+        @DisplayName("Deve fechar atendimento e atualizar status para CLOSED")
+        void shouldCloseAppointment() throws Exception {
+            String patientId = createPatientViaApi(faker.name().fullName(), faker.numerify("###.###.###-##"));
+            String doctorId = createDoctorViaApi(faker.name().fullName(), faker.numerify("CRM-SP ######"));
+            createAppointmentViaApi(patientId, doctorId);
+
+            openDashboard();
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            appointments.waitForRowCount(1);
+            appointments.clickCloseInRow(0);
+
+            assertThat(page.isAlertSuccess()).isTrue();
+            wait.until(d -> appointments.listContains("CLOSED"));
+            assertThat(appointments.listContains("CLOSED")).isTrue();
+        }
     }
 }
