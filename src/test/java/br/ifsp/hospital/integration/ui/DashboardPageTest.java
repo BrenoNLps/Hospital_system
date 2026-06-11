@@ -552,6 +552,28 @@ class DashboardPageTest extends BaseUiTest {
         }
 
         @Test
+        @DisplayName("Deve exibir paciente e médico criados via UI nos selects de atendimento")
+        void shouldShowUiCreatedPatientAndDoctorInAppointmentSelects() {
+            openDashboard();
+            String patientName = faker.name().fullName();
+            String doctorName = faker.name().fullName();
+
+            PatientsTabPage patients = page.getPatientsTab();
+            patients.fillForm(patientName, faker.numerify("###.###.###-##"), "BASIC");
+            patients.submit();
+            assertThat(page.isAlertSuccess()).isTrue();
+
+            DoctorsTabPage doctors = page.clickDoctorsTab();
+            doctors.fillForm(doctorName, "Cardiologia", faker.numerify("CRM-SP ######"));
+            doctors.submit();
+            assertThat(page.isAlertSuccess()).isTrue();
+
+            AppointmentsTabPage appointments = page.clickAppointmentsTab();
+            assertThat(appointments.patientSelectContains(patientName)).isTrue();
+            assertThat(appointments.doctorSelectContains(doctorName)).isTrue();
+        }
+
+        @Test
         @DisplayName("Deve atualizar lista de atendimentos ao clicar em Atualizar Lista")
         void shouldUpdateAppointmentListOnRefresh() throws Exception {
             openDashboard();

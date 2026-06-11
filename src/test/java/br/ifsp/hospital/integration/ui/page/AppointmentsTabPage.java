@@ -95,4 +95,14 @@ public class AppointmentsTabPage {
         Alert prompt = wait.until(ExpectedConditions.alertIsPresent());
         prompt.dismiss();
     }
+
+    public boolean patientSelectContains(String name) {
+        return new Select(driver.findElement(APPT_PATIENT)).getOptions().stream()
+                .anyMatch(o -> o.getText().equals(name));
+    }
+
+    public boolean doctorSelectContains(String name) {
+        return new Select(driver.findElement(APPT_DOCTOR)).getOptions().stream()
+                .anyMatch(o -> o.getText().equals(name));
+    }
 }
